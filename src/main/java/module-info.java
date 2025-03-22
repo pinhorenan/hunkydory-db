@@ -1,0 +1,2 @@
+module hunkydory.main {
+}
