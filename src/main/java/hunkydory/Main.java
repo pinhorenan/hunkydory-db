@@ -3,12 +3,83 @@
  */
 package hunkydory;
 
-public class Main {
-    public String getGreeting() {
-        return "Hello World!";
+import hunkydory.db.ClienteDAO;
+import hunkydory.model.Cliente;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.util.List;
+
+/**
+ * Classe principal do JavaFX. Exibe uma tela simples para listar clientes e inserir um exemplo.
+ */
+public class Main extends Application {
+
+    private ListView<Cliente> listView;
+
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("Hunky Dory - Clientes");
+
+        // Layout usando VBox
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        // ListView para exibir os clientes
+        listView = new ListView<>();
+        atualizarListaClientes();  // Carrega do banco
+
+        // Botão para inserir um novo cliente fictício
+        Button btnInserir = new Button("Inserir Cliente Exemplo");
+        btnInserir.setOnAction(e -> inserirClienteExemplo());
+
+        // Botão para recarregar a lista
+        Button btnAtualizar = new Button("Atualizar Lista");
+        btnAtualizar.setOnAction(e -> atualizarListaClientes());
+
+        // Adiciona os componentes ao layout
+        root.getChildren().addAll(new Label("Lista de Clientes:"), listView, btnInserir, btnAtualizar);
+
+        // Cria a cena e exibe
+        Scene scene = new Scene(root, 400, 400);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void atualizarListaClientes() {
+        listView.getItems().clear();
+        ClienteDAO dao = new ClienteDAO();
+        List<Cliente> clientes = dao.listarTodos();
+        listView.getItems().addAll(clientes);
+    }
+
+    private void inserirClienteExemplo() {
+        // Exemplo: cria um cliente "na marra"
+        Cliente novo = new Cliente(
+                9999,
+                "Fulano de Tal",
+                "fulano@example.com",
+                "(11) 99999-8888",
+                "Rua Exemplo, 123"
+        );
+
+        ClienteDAO dao = new ClienteDAO();
+        boolean inserido = dao.inserir(novo);
+        if (inserido) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Cliente inserido com sucesso!");
+            alert.showAndWait();
+            atualizarListaClientes();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao inserir cliente!");
+            alert.showAndWait();
+        }
     }
 
     public static void main(String[] args) {
-        System.out.println(new Main().getGreeting());
+        launch(args);
     }
 }

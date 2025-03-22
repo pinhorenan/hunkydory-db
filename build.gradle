@@ -29,7 +29,7 @@ javafx {
 
 application {
     // Define the main class for the application.
-    mainClass = 'Main'
+    mainClass = 'hunkydory.Main'
     mainModule = 'hunkydory'
 }
 
