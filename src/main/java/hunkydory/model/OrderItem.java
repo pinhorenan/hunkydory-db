@@ -2,33 +2,38 @@ package hunkydory.model;
 
 import java.math.BigDecimal;
 
+@SuppressWarnings("unused")
 public class OrderItem {
-    private int orderId;
-    private int productId;
-    private int quantity;
-    private BigDecimal unitPrice;
+    private int orderID; // ID da compra (PK parte 1)
+    private int productID; // ID do produto (PK parte 2)
+    private int quantity; // Quantidade
+    private BigDecimal price; // Preço unitário
 
-    public OrderItem(int orderId, int productId, int quantity, BigDecimal unitPrice) {
-        this.orderId = orderId;
-        this.productId = productId;
+    public OrderItem() {
+
+    }
+
+    public OrderItem(int orderID, int productID, int quantity, BigDecimal price) {
+        this.orderID = orderID;
+        this.productID = productID;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
+        this.price = price;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public int getOrderID() {
+        return orderID;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrderID(int orderID) {
+        this.orderID = orderID;
     }
 
-    public int getProductId() {
-        return productId;
+    public int getProductID() {
+        return productID;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductID(int productID) {
+        this.productID = productID;
     }
 
     public int getQuantity() {
@@ -39,19 +44,20 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     @Override
+
     public String toString() {
-        return "OrderItem [orderId=" + orderId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                ", unitPrice=" + unitPrice + "]";
+        return "OrderItem [orderID=" + orderID
+                + ", productID=" + productID
+                + ", quantity=" + quantity
+                + ", price=" + price + "]";
     }
 }

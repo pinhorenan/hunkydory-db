@@ -1,34 +1,44 @@
 package hunkydory.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@SuppressWarnings("unused")
 public class Order {
-    private int idOrder;
-    private LocalDate orderDate;
-    private String status;
-    private int customerId;
+    private int orderID;    // ID da compra (PK)
+    private int costumerID; // ID do cliente (FK)
+    private String status;  // Status da compra
+    private BigDecimal total; // Valor total
+    private LocalDate date; // Data da compra
+    private LocalDate deliveryDate; // Data de entrega
 
-    public Order(int idOrder, LocalDate orderDate, String status, int customerId) {
-        this.idOrder = idOrder;
-        this.orderDate = orderDate;
+    public Order() {
+
+    }
+
+    public Order(int orderID, int costumerID, String status, BigDecimal total, LocalDate date, LocalDate deliveryDate) {
+        this.orderID = orderID;
+        this.costumerID = costumerID;
         this.status = status;
-        this.customerId = customerId;
+        this.total = total;
+        this.date = date;
+        this.deliveryDate = deliveryDate;
     }
 
-    public int getIdOrder() {
-        return idOrder;
+    public int getOrderID() {
+        return orderID;
     }
 
-    public void setIdOrder(int idOrder) {
-        this.idOrder = idOrder;
+    public void setOrderID(int orderID) {
+        this.orderID = orderID;
     }
 
-    public LocalDate getOrderDate() {
-        return orderDate;
+    public int getCostumerID() {
+        return costumerID;
     }
 
-    public void setOrderDate(LocalDate orderDate) {
-        this.orderDate = orderDate;
+    public void setCostumerID(int costumerID) {
+        this.costumerID = costumerID;
     }
 
     public String getStatus() {
@@ -39,19 +49,37 @@ public class Order {
         this.status = status;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public BigDecimal getTotal() {
+        return total;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 
     @Override
     public String toString() {
-        return "Order [idOrder=" + idOrder +
-                ", orderDate=" + orderDate +
-                ", status=" + status +
-                ", customerId=" + customerId + "]";
+        return "Order [orderID=" + orderID
+                + ", costumerID=" + costumerID
+                + ", status=" + status
+                + ", total=" + total
+                + ", date=" + date
+                + ", deliveryDate=" + deliveryDate + "]";
     }
 }
