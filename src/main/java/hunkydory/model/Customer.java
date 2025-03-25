@@ -1,28 +1,29 @@
 package hunkydory.model;
 
-/**
- * Model that represents the 'customer' table.
- */
+@SuppressWarnings("unused")
 public class Customer {
-    private int idCustomer;
-    private String name;
-    private String email;
-    private String phone;
-    private String address;
+    private int customerID;  // id_cliente
+    private String name;     // nome
+    private String email;    // email
+    private String password; // senha
+    private String phone;    // telefone
 
-    public Customer(int idCustomer, String name, String email, String phone, String address) {
-        this.idCustomer = idCustomer;
+    public Customer() {
+    }
+
+    public Customer(int customerID, String name, String email, String password, String phone) {
+        this.customerID = customerID;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.phone = phone;
-        this.address = address;
     }
 
-    public int getIdCustomer() {
-        return idCustomer;
+    public int getCustomerID() {
+        return customerID;
     }
-    public void setIdCustomer(int idCustomer) {
-        this.idCustomer = idCustomer;
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
     }
     public String getName() {
         return name;
@@ -36,21 +37,25 @@ public class Customer {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
     public String getPhone() {
         return phone;
     }
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getAddress() {
-        return address;
-    }
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     @Override
     public String toString() {
-        return idCustomer + " - " + name;
+        return "Customer [customerID=" + customerID
+                + ", name=" + name
+                + ", email=" + email
+                + ", password=" + password
+                + ", phone=" + phone + "]";
     }
 }

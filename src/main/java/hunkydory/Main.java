@@ -17,8 +17,9 @@ public class Main extends Application {
         // Tela principal (menu)
         MainScreen mainScreen = new MainScreen(stage);
 
-        Scene scene = new Scene(mainScreen, 900, 600);
+        Scene scene = new Scene(mainScreen, 800, 500);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

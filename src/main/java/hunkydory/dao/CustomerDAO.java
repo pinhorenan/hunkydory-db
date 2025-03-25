@@ -9,18 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("CallToPrintStackTrace")
-public class CostumerDAO extends BaseDAO<Customer> implements GenericDAO<Customer> {
+public class CustomerDAO extends BaseDAO<Customer> implements GenericDAO<Customer> {
 
     @Override
     public boolean insert(Customer customer) {
-        String sql = "INSERT INTO cliente (id_cliente, nome, email, telefone, endereco) VALUES (?, ?, ?, ?, ?)";
+        // We'll assume we want to provide id_cliente manually (SERIAL allows override).
+        String sql = "INSERT INTO cliente (id_cliente, nome, telefone, email, senha) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, customer.getIdCustomer());
+
+            ps.setInt(1, customer.getCustomerID());
             ps.setString(2, customer.getName());
-            ps.setString(3, customer.getEmail());
-            ps.setString(4, customer.getPhone());
-            ps.setString(5, customer.getAddress());
+            ps.setString(3, customer.getPhone());
+            ps.setString(4, customer.getEmail());
+            ps.setString(5, customer.getPassword());
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -29,15 +32,17 @@ public class CostumerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
     }
 
     @Override
-    public boolean update(Customer costumer) {
-        String sql = "UPDATE cliente SET nome = ?, email = ?, telefone = ?, endereco = ? WHERE id_cliente = ?";
+    public boolean update(Customer customer) {
+        String sql = "UPDATE cliente SET nome = ?, telefone = ?, email = ?, senha = ? WHERE id_cliente = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, costumer.getName());
-            ps.setString(2, costumer.getEmail());
-            ps.setString(3, costumer.getPhone());
-            ps.setString(4, costumer.getAddress());
-            ps.setInt(5, costumer.getIdCustomer());
+
+            ps.setString(1, customer.getName());
+            ps.setString(2, customer.getPhone());
+            ps.setString(3, customer.getEmail());
+            ps.setString(4, customer.getPassword());
+            ps.setInt(5, customer.getCustomerID());
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,6 +55,7 @@ public class CostumerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
         String sql = "DELETE FROM cliente WHERE id_cliente = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -61,17 +67,18 @@ public class CostumerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
     @Override
     public List<Customer> listAll() {
         List<Customer> list = new ArrayList<>();
-        String sql = "SELECT id_cliente, nome, email, telefone, endereco FROM cliente";
+        String sql = "SELECT id_cliente, nome, telefone, email, senha FROM cliente";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 Customer c = new Customer(
                         rs.getInt("id_cliente"),
                         rs.getString("nome"),
-                        rs.getString("email"),
                         rs.getString("telefone"),
-                        rs.getString("endereco")
+                        rs.getString("email"),
+                        rs.getString("senha")
                 );
                 list.add(c);
             }
@@ -83,18 +90,19 @@ public class CostumerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
 
     @Override
     public Customer searchByID(int id) {
-        String sql = "SELECT id_cliente, nome, email, telefone, endereco FROM cliente WHERE id_cliente = ?";
+        String sql = "SELECT id_cliente, nome, telefone, email, senha FROM cliente WHERE id_cliente = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()){
-                if(rs.next()){
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
                     return new Customer(
                             rs.getInt("id_cliente"),
                             rs.getString("nome"),
-                            rs.getString("email"),
                             rs.getString("telefone"),
-                            rs.getString("endereco")
+                            rs.getString("email"),
+                            rs.getString("senha")
                     );
                 }
             }

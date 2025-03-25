@@ -1,6 +1,6 @@
 package hunkydory.ui.customer;
 
-import hunkydory.dao.CostumerDAO;
+import hunkydory.dao.CustomerDAO;
 import hunkydory.model.Customer;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -21,10 +21,10 @@ public class CustomerForm extends Stage {
     private final TextField txtAddress;
 
     private Runnable onSave; // callback executado ao salvar
-    private CostumerDAO costumerDAO;
+    private CustomerDAO costumerDAO;
     private Customer costumer; // null = novo
 
-    public CustomerForm(Customer costumer, CostumerDAO dao) {
+    public CustomerForm(Customer costumer, CustomerDAO dao) {
         this.costumer = costumer;
         this.costumerDAO = dao;
 

@@ -1,21 +1,25 @@
 package hunkydory.model;
 
+@SuppressWarnings("unused")
 public class Supplier {
-    private String cnpj;  // chave primária
-    private String name;
-    private String contact;
+    private int supplierID; // id_fornecedor (PK)
+    private String name;    // nome
+    private String contact; // contato
 
-    public Supplier(String cnpj, String name, String contact) {
-        this.cnpj = cnpj;
+    public Supplier() {
+    }
+
+    public Supplier(int supplierID, String name, String contact) {
+        this.supplierID = supplierID;
         this.name = name;
         this.contact = contact;
     }
 
-    public String getCNPJ() {
-        return cnpj;
+    public int getSupplierID() {
+        return supplierID;
     }
-    public void setCNPJ(String cnpj) {
-        this.cnpj = cnpj;
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
     }
     public String getName() {
         return name;
@@ -32,8 +36,8 @@ public class Supplier {
 
     @Override
     public String toString() {
-        return "Supplier [cnpj=" + cnpj +
-                ", name=" + name +
-                ", contact=" + contact + "]";
+        return "Supplier [supplierID=" + supplierID
+                + ", name=" + name
+                + ", contact=" + contact + "]";
     }
 }

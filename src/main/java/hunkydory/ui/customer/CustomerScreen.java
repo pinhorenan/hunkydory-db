@@ -1,6 +1,6 @@
 package hunkydory.ui.customer;
 
-import hunkydory.dao.CostumerDAO;
+import hunkydory.dao.CustomerDAO;
 import hunkydory.model.Customer;
 import hunkydory.ui.MainScreen;
 import javafx.beans.property.SimpleObjectProperty;
@@ -18,7 +18,7 @@ public class CustomerScreen extends VBox {
 
     private final TableView<Customer> tableView;
     private final ObservableList<Customer> data;
-    private final CostumerDAO costumerDAO = new CostumerDAO();
+    private final CustomerDAO costumerDAO = new CustomerDAO();
 
     public CustomerScreen(Stage mainStage) {
         setSpacing(10);

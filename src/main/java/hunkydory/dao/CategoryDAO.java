@@ -1,35 +1,32 @@
 /*
  * =============================================================================
- *  4) SupplierDAO.java
- *  TABLE: fornecedor
- *     - id_fornecedor (PK)
- *     - nome (NOT NULL)
- *     - contato
+ *  3) CategoryDAO.java
+ *  TABLE: categoria
+ *     - id_categoria (PK)
+ *     - descricao (NOT NULL, UNIQUE)
  * =============================================================================
  */
 package hunkydory.dao;
 
 import hunkydory.dao.base.BaseDAO;
 import hunkydory.dao.base.GenericDAO;
-import hunkydory.model.Supplier;
+import hunkydory.model.Category;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("CallToPrintStackTrace")
-public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplier> {
+@SuppressWarnings({"CallToPrintStackTrace", "unused"})
+public class CategoryDAO extends BaseDAO<Category> implements GenericDAO<Category> {
 
     @Override
-    public boolean insert(Supplier supplier) {
-        // We'll assume we want to provide id_fornecedor manually
-        String sql = "INSERT INTO fornecedor (id_fornecedor, nome, contato) VALUES (?, ?, ?)";
+    public boolean insert(Category category) {
+        String sql = "INSERT INTO categoria (id_categoria, descricao) VALUES (?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, supplier.getSupplierID());
-            ps.setString(2, supplier.getName());
-            ps.setString(3, supplier.getContact());
+            ps.setInt(1, category.getCategoryID());
+            ps.setString(2, category.getCategoryName());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,14 +35,13 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
     }
 
     @Override
-    public boolean update(Supplier supplier) {
-        String sql = "UPDATE fornecedor SET nome = ?, contato = ? WHERE id_fornecedor = ?";
+    public boolean update(Category category) {
+        String sql = "UPDATE categoria SET descricao = ? WHERE id_categoria = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, supplier.getName());
-            ps.setString(2, supplier.getContact());
-            ps.setInt(3, supplier.getSupplierID());
+            ps.setString(1, category.getCategoryName());
+            ps.setInt(2, category.getCategoryID());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,10 +49,9 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
         return false;
     }
 
-    // We'll keep the base signature, but we do delete by id_fornecedor
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM fornecedor WHERE id_fornecedor = ?";
+        String sql = "DELETE FROM categoria WHERE id_categoria = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -69,20 +64,19 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
     }
 
     @Override
-    public List<Supplier> listAll() {
-        List<Supplier> list = new ArrayList<>();
-        String sql = "SELECT id_fornecedor, nome, contato FROM fornecedor";
+    public List<Category> listAll() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT id_categoria, descricao FROM categoria";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Supplier s = new Supplier(
-                        rs.getInt("id_fornecedor"),
-                        rs.getString("nome"),
-                        rs.getString("contato")
+                Category c = new Category(
+                        rs.getInt("id_categoria"),
+                        rs.getString("descricao")
                 );
-                list.add(s);
+                list.add(c);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,18 +85,17 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
     }
 
     @Override
-    public Supplier searchByID(int id) {
-        String sql = "SELECT id_fornecedor, nome, contato FROM fornecedor WHERE id_fornecedor = ?";
+    public Category searchByID(int id) {
+        String sql = "SELECT id_categoria, descricao FROM categoria WHERE id_categoria = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Supplier(
-                            rs.getInt("id_fornecedor"),
-                            rs.getString("nome"),
-                            rs.getString("contato")
+                    return new Category(
+                            rs.getInt("id_categoria"),
+                            rs.getString("descricao")
                     );
                 }
             }

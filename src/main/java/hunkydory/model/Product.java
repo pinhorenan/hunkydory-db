@@ -2,28 +2,47 @@ package hunkydory.model;
 
 import java.math.BigDecimal;
 
+@SuppressWarnings("unused")
 public class Product {
-    private int idProduct;
-    private String name;
-    private BigDecimal price;
-    private String description;
-    private String category;
-    private String supplierCnpj;  // alterado de int supplierId para String supplierCnpj
+    private int productID;   // id_produto (PK)
+    private int categoryID;  // id_categoria (FK)
+    private int supplierID;  // id_fornecedor (FK)
+    private String name;     // nome
+    private BigDecimal price;    // preco
+    private int stock;           // estoque
+    private String description;  // descricao
 
-    public Product(int idProduct, String name, BigDecimal price, String description, String category, String supplierCnpj) {
-        this.idProduct = idProduct;
+    public Product() {
+    }
+
+    public Product(int productID, int categoryID, int supplierID, String name,
+                   BigDecimal price, int stock, String description) {
+        this.productID = productID;
+        this.categoryID = categoryID;
+        this.supplierID = supplierID;
         this.name = name;
         this.price = price;
+        this.stock = stock;
         this.description = description;
-        this.category = category;
-        this.supplierCnpj = supplierCnpj;
     }
 
-    public int getIdProduct() {
-        return idProduct;
+    public int getProductID() {
+        return productID;
     }
-    public void setIdProduct(int idProduct) {
-        this.idProduct = idProduct;
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
+    public int getCategoryID() {
+        return categoryID;
+    }
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
+    public int getSupplierID() {
+        return supplierID;
+    }
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
     }
     public String getName() {
         return name;
@@ -37,32 +56,27 @@ public class Product {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+    public int getStock() {
+        return stock;
+    }
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
     }
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    public String getSupplierCNPJ() {
-        return supplierCnpj;
-    }
-    public void setSupplierCNPJ(String supplierCnpj) {
-        this.supplierCnpj = supplierCnpj;
-    }
 
     @Override
     public String toString() {
-        return "Product [idProduct=" + idProduct +
-                ", name=" + name +
-                ", price=" + price +
-                ", description=" + description +
-                ", category=" + category +
-                ", supplierCnpj=" + supplierCnpj + "]";
+        return "Product [productID=" + productID
+                + ", categoryID=" + categoryID
+                + ", supplierID=" + supplierID
+                + ", name=" + name
+                + ", price=" + price
+                + ", stock=" + stock
+                + ", description=" + description + "]";
     }
 }
