@@ -1,85 +1,188 @@
--- ================================
--- CRIAÇÃO DAS TABELAS
--- ================================
+-- =====================================
+-- 1. Criação das Tabelas
+-- =====================================
 
--- 1) Tabela Fornecedor
-CREATE TABLE Fornecedor (
-    id_fornecedor       INT             NOT NULL,
-    nome                VARCHAR(100),
-    cnpj                VARCHAR(20),
-    contato             VARCHAR(100),
-    PRIMARY KEY (id_fornecedor)
+-- Tabela: cliente
+CREATE TABLE cliente (
+    id_cliente     SERIAL PRIMARY KEY,
+    nome           VARCHAR(100) NOT NULL,
+    telefone       VARCHAR(20),
+    email          VARCHAR(150) NOT NULL UNIQUE,
+    senha          VARCHAR(100) NOT NULL
 );
 
--- 2) Tabela Cliente
-CREATE TABLE Cliente (
-    id_cliente          INT             NOT NULL,
-    nome                VARCHAR(100),
-    email               VARCHAR(100),
-    telefone            VARCHAR(20),
-    endereco            VARCHAR(200),
-    PRIMARY KEY (id_cliente)
+-- Tabela: endereco_cliente (1:1 com cliente)
+CREATE TABLE endereco_cliente (
+    id_endereco    SERIAL PRIMARY KEY,
+    rua            VARCHAR(100),
+    numero         VARCHAR(10),
+    cidade         VARCHAR(50),
+    estado         VARCHAR(30),
+    cep            VARCHAR(15),
+    complemento    VARCHAR(50),
+    id_cliente     INT UNIQUE NOT NULL,
+    CONSTRAINT fk_endereco_cliente
+        FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- 3) Tabela Produto (relaciona com Fornecedor)
-CREATE TABLE Produto (
-    id_produto          INT             NOT NULL,
-    nome                VARCHAR(100),
-    preco               DECIMAL(10,2),
-    descricao           VARCHAR(200),
-    categoria           VARCHAR(100),
-    id_fornecedor       INT             NOT NULL,
-    PRIMARY KEY (id_produto),
+-- Tabela: fornecedor
+CREATE TABLE fornecedor (
+    id_fornecedor  SERIAL PRIMARY KEY,
+    nome           VARCHAR(100) NOT NULL,
+    contato        VARCHAR(100)
+);
+
+-- Tabela: categoria
+CREATE TABLE categoria (
+    id_categoria   SERIAL PRIMARY KEY,
+    descricao      VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Tabela: produto
+CREATE TABLE produto (
+    id_produto     SERIAL PRIMARY KEY,
+    nome           VARCHAR(100) NOT NULL,
+    preco          NUMERIC(10,2) NOT NULL CHECK (preco >= 0),
+    estoque        INT NOT NULL DEFAULT 0 CHECK (estoque >= 0),
+    descricao      TEXT,
+    id_categoria   INT NOT NULL,
+    id_fornecedor  INT NOT NULL,
+    CONSTRAINT fk_produto_categoria
+        FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria),
     CONSTRAINT fk_produto_fornecedor
-        FOREIGN KEY (id_fornecedor)
-        REFERENCES Fornecedor(id_fornecedor)
+        FOREIGN KEY (id_fornecedor) REFERENCES fornecedor(id_fornecedor)
 );
 
--- 4) Tabela Estoque (1:1 com Produto, para controlar quantidades)
-CREATE TABLE Estoque (
-    id_produto          INT             NOT NULL,
-    quantidade_disponivel INT           NOT NULL,
-    PRIMARY KEY (id_produto),
-    CONSTRAINT fk_estoque_produto
-        FOREIGN KEY (id_produto)
-        REFERENCES Produto(id_produto)
+-- Tabela: compra (pedido)
+CREATE TABLE compra (
+    id_compra      SERIAL PRIMARY KEY,
+    status         VARCHAR(50) NOT NULL DEFAULT 'Em aberto',
+    valor_total    NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (valor_total >= 0),
+    data_pedido    DATE NOT NULL DEFAULT CURRENT_DATE,
+    data_entrega   DATE,
+    id_cliente     INT NOT NULL,
+    CONSTRAINT fk_compra_cliente
+        FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- 5) Tabela Pedido (relaciona com Cliente)
-CREATE TABLE Pedido (
-    id_pedido           INT             NOT NULL,
-    data                DATE,
-    status              VARCHAR(50),
-    id_cliente          INT             NOT NULL,
-    PRIMARY KEY (id_pedido),
-    CONSTRAINT fk_pedido_cliente
-        FOREIGN KEY (id_cliente)
-        REFERENCES Cliente(id_cliente)
+-- Tabela: endereco_entrega (1:1 com compra)
+CREATE TABLE endereco_entrega (
+    id_endereco    SERIAL PRIMARY KEY,
+    rua            VARCHAR(100),
+    numero         VARCHAR(10),
+    cidade         VARCHAR(50),
+    estado         VARCHAR(30),
+    cep            VARCHAR(15),
+    complemento    VARCHAR(50),
+    id_compra      INT UNIQUE NOT NULL,
+    CONSTRAINT fk_endereco_entrega_compra
+        FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
 
--- 6) Tabela ItemPedido (tabela associativa entre Pedido e Produto)
-CREATE TABLE ItemPedido (
-    id_pedido           INT             NOT NULL,
-    id_produto          INT             NOT NULL,
-    quantidade          INT             NOT NULL,
-    preco_unitario      DECIMAL(10,2),
-    PRIMARY KEY (id_pedido, id_produto),
-    CONSTRAINT fk_itempedido_pedido
-        FOREIGN KEY (id_pedido)
-        REFERENCES Pedido(id_pedido),
-    CONSTRAINT fk_itempedido_produto
-        FOREIGN KEY (id_produto)
-        REFERENCES Produto(id_produto)
+-- Tabela: item_compra (relacionamento N:N entre compra e produto)
+CREATE TABLE item_compra (
+    id_compra      INT NOT NULL,
+    id_produto     INT NOT NULL,
+    quantidade     INT NOT NULL CHECK (quantidade > 0),
+    preco_unitario NUMERIC(10,2) NOT NULL CHECK (preco_unitario >= 0),
+    PRIMARY KEY (id_compra, id_produto),
+    CONSTRAINT fk_item_compra_compra
+        FOREIGN KEY (id_compra) REFERENCES compra(id_compra),
+    CONSTRAINT fk_item_compra_produto
+        FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
--- 7) Tabela Entrega (relaciona com Pedido)
-CREATE TABLE Entrega (
-    id_entrega          INT             NOT NULL,
-    id_pedido           INT             NOT NULL,
-    data_entrega        DATE,
-    status              VARCHAR(50),
-    PRIMARY KEY (id_entrega),
-    CONSTRAINT fk_entrega_pedido
-        FOREIGN KEY (id_pedido)
-        REFERENCES Pedido(id_pedido)
+-- Tabela: troca_devolucao
+CREATE TABLE troca_devolucao (
+    id_solicitacao   SERIAL PRIMARY KEY,
+    data_solicitacao DATE NOT NULL DEFAULT CURRENT_DATE,
+    motivo           TEXT,
+    status           VARCHAR(50) NOT NULL DEFAULT 'Em análise',
+    id_compra        INT NOT NULL,
+    CONSTRAINT fk_troca_compra
+        FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
+
+-- Tabela: avaliacao
+CREATE TABLE avaliacao (
+    id_avaliacao SERIAL PRIMARY KEY,
+    nota         INT NOT NULL CHECK (nota BETWEEN 1 AND 5),
+    comentario   TEXT,
+    data         DATE NOT NULL DEFAULT CURRENT_DATE,
+    id_cliente   INT NOT NULL,
+    id_compra    INT NOT NULL,
+    CONSTRAINT fk_avaliacao_cliente
+        FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    CONSTRAINT fk_avaliacao_compra
+        FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
+);
+
+-- =====================================
+-- 2. Triggers e Funções para Regras de Negócio
+-- =====================================
+
+-- 2.1 Função para deduzir o estoque ao inserir um item de compra
+CREATE OR REPLACE FUNCTION fn_deduzir_estoque()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Verifica se há estoque suficiente para o produto
+    IF (SELECT estoque FROM produto WHERE id_produto = NEW.id_produto) < NEW.quantidade THEN
+        RAISE EXCEPTION 'Estoque insuficiente para o produto %', NEW.id_produto;
+    END IF;
+
+    -- Deduz a quantidade do estoque
+    UPDATE produto
+       SET estoque = estoque - NEW.quantidade
+     WHERE id_produto = NEW.id_produto;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_deduzir_estoque
+AFTER INSERT ON item_compra
+FOR EACH ROW
+EXECUTE PROCEDURE fn_deduzir_estoque();
+
+-- 2.2 Função para recalcular o valor total da compra sempre que houver alteração nos itens
+CREATE OR REPLACE FUNCTION fn_recalcular_total()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE compra
+       SET valor_total = (
+         SELECT COALESCE(SUM(ic.quantidade * ic.preco_unitario), 0)
+         FROM item_compra ic
+         WHERE ic.id_compra = NEW.id_compra
+       )
+     WHERE id_compra = NEW.id_compra;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_recalcular_total
+AFTER INSERT OR UPDATE OR DELETE ON item_compra
+FOR EACH ROW
+EXECUTE PROCEDURE fn_recalcular_total();
+
+-- 2.3 Função para restituir o estoque se o status da compra for alterado para 'Cancelado' ou 'Devolvido'
+CREATE OR REPLACE FUNCTION fn_restituir_estoque()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status IN ('Cancelado', 'Devolvido') AND OLD.status NOT IN ('Cancelado', 'Devolvido') THEN
+        -- Para cada item da compra, restitui o estoque
+        UPDATE produto p
+           SET estoque = estoque + ic.quantidade
+          FROM item_compra ic
+         WHERE ic.id_compra = OLD.id_compra
+           AND ic.id_produto = p.id_produto;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_restituir_estoque
+AFTER UPDATE ON compra
+FOR EACH ROW
+WHEN (OLD.status IS DISTINCT FROM NEW.status)
+EXECUTE PROCEDURE fn_restituir_estoque();
