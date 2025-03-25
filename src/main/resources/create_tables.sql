@@ -1,8 +1,3 @@
--- =====================================
--- 1. Criação das Tabelas
--- =====================================
-
--- Tabela: cliente
 CREATE TABLE cliente (
     id_cliente     SERIAL PRIMARY KEY,
     nome           VARCHAR(100) NOT NULL,
@@ -11,7 +6,6 @@ CREATE TABLE cliente (
     senha          VARCHAR(100) NOT NULL
 );
 
--- Tabela: endereco_cliente (1:1 com cliente)
 CREATE TABLE endereco_cliente (
     id_endereco    SERIAL PRIMARY KEY,
     rua            VARCHAR(100),
@@ -25,20 +19,17 @@ CREATE TABLE endereco_cliente (
         FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- Tabela: fornecedor
 CREATE TABLE fornecedor (
     id_fornecedor  SERIAL PRIMARY KEY,
     nome           VARCHAR(100) NOT NULL,
     contato        VARCHAR(100)
 );
 
--- Tabela: categoria
 CREATE TABLE categoria (
     id_categoria   SERIAL PRIMARY KEY,
     descricao      VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Tabela: produto
 CREATE TABLE produto (
     id_produto     SERIAL PRIMARY KEY,
     nome           VARCHAR(100) NOT NULL,
@@ -53,7 +44,6 @@ CREATE TABLE produto (
         FOREIGN KEY (id_fornecedor) REFERENCES fornecedor(id_fornecedor)
 );
 
--- Tabela: compra (pedido)
 CREATE TABLE compra (
     id_compra      SERIAL PRIMARY KEY,
     status         VARCHAR(50) NOT NULL DEFAULT 'Em aberto',
@@ -65,7 +55,6 @@ CREATE TABLE compra (
         FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- Tabela: endereco_entrega (1:1 com compra)
 CREATE TABLE endereco_entrega (
     id_endereco    SERIAL PRIMARY KEY,
     rua            VARCHAR(100),
@@ -79,7 +68,6 @@ CREATE TABLE endereco_entrega (
         FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
 
--- Tabela: item_compra (relacionamento N:N entre compra e produto)
 CREATE TABLE item_compra (
     id_compra      INT NOT NULL,
     id_produto     INT NOT NULL,
@@ -92,7 +80,6 @@ CREATE TABLE item_compra (
         FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
--- Tabela: troca_devolucao
 CREATE TABLE troca_devolucao (
     id_solicitacao   SERIAL PRIMARY KEY,
     data_solicitacao DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -103,7 +90,6 @@ CREATE TABLE troca_devolucao (
         FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
 
--- Tabela: avaliacao
 CREATE TABLE avaliacao (
     id_avaliacao SERIAL PRIMARY KEY,
     nota         INT NOT NULL CHECK (nota BETWEEN 1 AND 5),
@@ -117,11 +103,7 @@ CREATE TABLE avaliacao (
         FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
 
--- =====================================
--- 2. Triggers e Funções para Regras de Negócio
--- =====================================
-
--- 2.1 Função para deduzir o estoque ao inserir um item de compra
+-- Função para deduzir o estoque ao inserir um item de compra
 CREATE OR REPLACE FUNCTION fn_deduzir_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -139,12 +121,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Trigger para deduzir o estoque
 CREATE TRIGGER trg_deduzir_estoque
 AFTER INSERT ON item_compra
 FOR EACH ROW
 EXECUTE PROCEDURE fn_deduzir_estoque();
 
--- 2.2 Função para recalcular o valor total da compra sempre que houver alteração nos itens
+-- Função para recalcular o valor total da compra sempre que houver alteração nos itens
 CREATE OR REPLACE FUNCTION fn_recalcular_total()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -160,12 +143,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Trigger para recalcular o valor total da compra
 CREATE TRIGGER trg_recalcular_total
 AFTER INSERT OR UPDATE OR DELETE ON item_compra
 FOR EACH ROW
 EXECUTE PROCEDURE fn_recalcular_total();
 
--- 2.3 Função para restituir o estoque se o status da compra for alterado para 'Cancelado' ou 'Devolvido'
+-- Função para restituir o estoque se o status da compra for alterado para 'Cancelado' ou 'Devolvido'
 CREATE OR REPLACE FUNCTION fn_restituir_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -181,6 +165,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Trigger para restituir o estoque
 CREATE TRIGGER trg_restituir_estoque
 AFTER UPDATE ON compra
 FOR EACH ROW
