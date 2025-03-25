@@ -1,4 +1,3 @@
--- Fornecedor (10 registros)
 INSERT INTO fornecedor (nome, contato) VALUES
   ('Fornecedor Alpha', 'alpha@fornec.com'),
   ('Fornecedor Beta', 'contato@beta.com'),
@@ -11,13 +10,11 @@ INSERT INTO fornecedor (nome, contato) VALUES
   ('Fornecedor Iota', 'iota@fornec.com'),
   ('Fornecedor Kappa', 'kappa@fornec.com');
 
--- Categoria (3 registros)
 INSERT INTO categoria (descricao) VALUES
   ('Roupas Masculinas'),
   ('Roupas Femininas'),
   ('Agasalhos');
 
--- Cliente (20 registros)
 INSERT INTO cliente (nome, telefone, email, senha) VALUES
   ('Alice Silva',         '(11) 91234-5678', 'alice.silva@example.com',    'senha123'),
   ('Bruno Santos',        '(11) 92345-6789', 'bruno.santos@example.com',   'senha123'),
@@ -40,7 +37,6 @@ INSERT INTO cliente (nome, telefone, email, senha) VALUES
   ('Sofia Teixeira',      '(11) 99012-3457', 'sofia.teixeira@example.com', 'senha123'),
   ('Tomás Almeida',       '(11) 90123-4568', 'tomas.almeida@example.com',  'senha123');
 
--- Endereço do Cliente (endereco_cliente)
 INSERT INTO endereco_cliente (rua, numero, cidade, estado, cep, complemento, id_cliente) VALUES
   ('Rua A', '123', 'Cidade A', 'Estado A', '00000-001', '', 1),
   ('Av. B', '234', 'Cidade B', 'Estado B', '00000-002', '', 2),
@@ -63,9 +59,7 @@ INSERT INTO endereco_cliente (rua, numero, cidade, estado, cep, complemento, id_
   ('Rua S', '190', 'Cidade S', 'Estado S', '00000-019', '', 19),
   ('Av. T', '201', 'Cidade T', 'Estado T', '00000-020', '', 20);
 
--- Produto (30 registros)
--- Note: mapeamos 'Roupas Masculinas' -> 1, 'Roupas Femininas' -> 2, 'Agasalhos' -> 3;
--- e para id_fornecedor, consideramos a ordem de inserção (1 a 10)
+-- OBS: mapeamos 'Roupas Masculinas' -> 1, 'Roupas Femininas' -> 2, 'Agasalhos' -> 3;
 INSERT INTO produto (nome, preco, estoque, descricao, id_categoria, id_fornecedor) VALUES
   ('Camiseta Básica',        29.90, 100, 'Camiseta de algodão básica',         1, 1),
   ('Camiseta Estampada',     39.90,  80, 'Camiseta com estampa moderna',       2, 2),
@@ -98,9 +92,6 @@ INSERT INTO produto (nome, preco, estoque, descricao, id_categoria, id_fornecedo
   ('Vestido Casual',        79.90,  80, 'Vestido casual para o dia a dia',     2, 9),
   ('Blusa de Manga Longa',  49.90, 110, 'Blusa com mangas longas',            2, 10);
 
--- Estoque foi integrado à tabela produto, portanto já está definido nos INSERTs acima.
-
--- Compra (25 registros)
 -- Valor_total é inicializado em 0 (será recalculado pela trigger)
 INSERT INTO compra (data_pedido, status, id_cliente, valor_total) VALUES
   ('2025-03-01', 'Finalizado', 1, 0),
@@ -146,7 +137,6 @@ INSERT INTO endereco_entrega (rua, numero, cidade, estado, cep, complemento, id_
   ('Rua Entrega 13', '130', 'Cidade N', 'Estado N', '14141-141', '', 24),
   ('Rua Entrega 14', '140', 'Cidade M', 'Estado M', '15151-151', '', 25);
 
--- ItemCompra (45 registros)
 INSERT INTO item_compra (id_compra, id_produto, quantidade, preco_unitario) VALUES
   (1,  1, 2,  29.90),
   (1,  3, 1,  79.90),
@@ -198,10 +188,8 @@ INSERT INTO item_compra (id_compra, id_produto, quantidade, preco_unitario) VALU
   (25, 18, 1, 119.90),
   (25, 19, 1,  54.90);
 
--- Troca/Devolução (exemplo único)
 INSERT INTO troca_devolucao (data_solicitacao, motivo, status, id_compra) VALUES
   ('2025-03-05', 'Produto danificado', 'Aprovada', 3);
 
--- Avaliação (exemplo único)
 INSERT INTO avaliacao (nota, comentario, data, id_cliente, id_compra) VALUES
   (5, 'Excelente serviço e produto', '2025-03-10', 1, 1);
