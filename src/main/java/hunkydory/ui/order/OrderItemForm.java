@@ -4,27 +4,31 @@ import hunkydory.dao.OrderItemDAO;
 import hunkydory.model.OrderItem;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.math.BigDecimal;
 
 public class OrderItemForm extends Stage {
-    private TextField txtProductId;
-    private TextField txtQuantity;
-    private TextField txtUnitPrice;
+    private final TextField txtProductId;
+    private final TextField txtQuantity;
+    private final TextField txtUnitPrice;
 
     private Runnable onSave;
-    private OrderItemDAO orderItemDAO;
-    private OrderItem orderItem; // can be null for new
-    private int orderId;
+    private final OrderItemDAO orderItemDAO;
+    private final OrderItem orderItem;
+    private final int orderId;
 
     public OrderItemForm(int orderId, OrderItem item, OrderItemDAO dao) {
         this.orderId = orderId;
         this.orderItem = item;
         this.orderItemDAO = dao;
-        setTitle(item == null ? "Novo item" : "Editar item");
+        setTitle(item == null ? "Novo Item" : "Editar Item");
         initModality(Modality.APPLICATION_MODAL);
 
         GridPane gp = new GridPane();
@@ -39,9 +43,9 @@ public class OrderItemForm extends Stage {
         Label lblUnitPrice = new Label("Preço Unitário:");
         txtUnitPrice = new TextField();
 
-        if(orderItem != null) {
-            txtProductId.setText(String.valueOf(orderItem.getProductId()));
-            txtProductId.setDisable(true); // Não pode alterar ID
+        if (orderItem != null) {
+            txtProductId.setText(String.valueOf(orderItem.getProductID()));
+            txtProductId.setDisable(true);
             txtQuantity.setText(String.valueOf(orderItem.getQuantity()));
             txtUnitPrice.setText(orderItem.getUnitPrice().toString());
         }
@@ -67,7 +71,7 @@ public class OrderItemForm extends Stage {
             BigDecimal unitPrice = new BigDecimal(txtUnitPrice.getText());
 
             boolean ok;
-            if(orderItem == null) {
+            if (orderItem == null) {
                 OrderItem newItem = new OrderItem(orderId, productId, quantity, unitPrice);
                 ok = orderItemDAO.insert(newItem);
             } else {
@@ -75,15 +79,15 @@ public class OrderItemForm extends Stage {
                 orderItem.setUnitPrice(unitPrice);
                 ok = orderItemDAO.update(orderItem);
             }
-            if(ok) {
+            if (ok) {
                 showAlert("Item salvo.");
-                if(onSave != null) onSave.run();
+                if (onSave != null) onSave.run();
                 close();
             } else {
                 showAlert("Erro ao salvar item.");
             }
         } catch (NumberFormatException ex) {
-            showAlert("Input numérico inválido.");
+            showAlert("Entrada numérica inválida.");
         }
     }
 

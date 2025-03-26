@@ -4,19 +4,23 @@ import hunkydory.dao.SupplierDAO;
 import hunkydory.model.Supplier;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SupplierForm extends Stage {
-    private TextField txtCnpj;
-    private TextField txtName;
-    private TextField txtContact;
+    private final TextField txtSupplierID;
+    private final TextField txtName;
+    private final TextField txtContact;
 
     private Runnable onSave;
-    private SupplierDAO supplierDAO;
-    private Supplier supplier;
+    private final SupplierDAO supplierDAO;
+    private final Supplier supplier;
 
     public SupplierForm(Supplier supplier, SupplierDAO dao) {
         this.supplier = supplier;
@@ -29,16 +33,16 @@ public class SupplierForm extends Stage {
         gp.setVgap(10);
         gp.setPadding(new Insets(10));
 
-        Label lblCnpj = new Label("CNPJ:");
-        txtCnpj = new TextField();
+        Label lblSupplierID = new Label("ID do Fornecedor:");
+        txtSupplierID = new TextField();
         Label lblName = new Label("Nome:");
         txtName = new TextField();
         Label lblContact = new Label("Contato:");
         txtContact = new TextField();
 
-        if(supplier != null) {
-            txtCnpj.setText(supplier.getCNPJ());
-            txtCnpj.setEditable(false);
+        if (supplier != null) {
+            txtSupplierID.setText(String.valueOf(supplier.getSupplierID()));
+            txtSupplierID.setDisable(true);
             txtName.setText(supplier.getName());
             txtContact.setText(supplier.getContact());
         }
@@ -48,7 +52,7 @@ public class SupplierForm extends Stage {
         Button btnCancel = new Button("Cancelar");
         btnCancel.setOnAction(e -> close());
 
-        gp.addRow(0, lblCnpj, txtCnpj);
+        gp.addRow(0, lblSupplierID, txtSupplierID);
         gp.addRow(1, lblName, txtName);
         gp.addRow(2, lblContact, txtContact);
         gp.addRow(3, btnSave, btnCancel);
@@ -59,30 +63,28 @@ public class SupplierForm extends Stage {
 
     private void saveSupplier() {
         try {
-            String cnpj = txtCnpj.getText();
+            int supplierId = Integer.parseInt(txtSupplierID.getText());
             String name = txtName.getText();
             String contact = txtContact.getText();
 
             boolean ok;
-            if(supplier == null) {
-                Supplier newSupplier = new Supplier(cnpj, name, contact);
+            if (supplier == null) {
+                Supplier newSupplier = new Supplier(supplierId, name, contact);
                 ok = supplierDAO.insert(newSupplier);
             } else {
                 supplier.setName(name);
-                supplier.setCNPJ(cnpj);
                 supplier.setContact(contact);
                 ok = supplierDAO.update(supplier);
             }
-            if(ok) {
+            if (ok) {
                 showAlert("Fornecedor salvo.");
-                if(onSave != null) onSave.run();
+                if (onSave != null) onSave.run();
                 close();
             } else {
                 showAlert("Erro ao salvar fornecedor.");
             }
         } catch (NumberFormatException ex) {
-            // TODO: IDs devem ser autoincrementados
-            showAlert("ID inválido. Por favor, digite apenas números inteiros positivos.");
+            showAlert("Entrada numérica inválida.");
         }
     }
 

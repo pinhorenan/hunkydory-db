@@ -8,17 +8,19 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class OrderForm extends Stage {
-    private TextField txtId;
-    private DatePicker dpOrderDate;
-    private TextField txtStatus;
-    private TextField txtCustomerId;
+    private final TextField txtId;
+    private final DatePicker dpOrderDate;
+    private final DatePicker dpDeliveryDate;
+    private final TextField txtStatus;
+    private final TextField txtCustomerId;
 
     private Runnable onSave;
-    private OrderDAO orderDAO;
-    private Order order; // null = new order
+    private final OrderDAO orderDAO;
+    private final Order order;
 
     public OrderForm(Order order, OrderDAO dao) {
         this.order = order;
@@ -33,19 +35,22 @@ public class OrderForm extends Stage {
 
         Label lblId = new Label("ID do Pedido:");
         txtId = new TextField();
-        Label lblDate = new Label("Data do Pedido:");
+        Label lblOrderDate = new Label("Data do Pedido:");
         dpOrderDate = new DatePicker();
+        Label lblDeliveryDate = new Label("Data de Entrega:");
+        dpDeliveryDate = new DatePicker();
         Label lblStatus = new Label("Status:");
         txtStatus = new TextField();
         Label lblCustomer = new Label("ID do Cliente:");
         txtCustomerId = new TextField();
 
-        if(order != null) {
-            txtId.setText(String.valueOf(order.getIdOrder()));
+        if (order != null) {
+            txtId.setText(String.valueOf(order.getOrderID()));
             txtId.setDisable(true);
             dpOrderDate.setValue(order.getOrderDate());
+            dpDeliveryDate.setValue(order.getDeliveryDate());
             txtStatus.setText(order.getStatus());
-            txtCustomerId.setText(String.valueOf(order.getCustomerId()));
+            txtCustomerId.setText(String.valueOf(order.getCustomerID()));
         }
 
         Button btnSave = new Button("Salvar");
@@ -54,12 +59,13 @@ public class OrderForm extends Stage {
         btnCancel.setOnAction(e -> close());
 
         gp.addRow(0, lblId, txtId);
-        gp.addRow(1, lblDate, dpOrderDate);
-        gp.addRow(2, lblStatus, txtStatus);
-        gp.addRow(3, lblCustomer, txtCustomerId);
-        gp.addRow(4, btnSave, btnCancel);
+        gp.addRow(1, lblOrderDate, dpOrderDate);
+        gp.addRow(2, lblDeliveryDate, dpDeliveryDate);
+        gp.addRow(3, lblStatus, txtStatus);
+        gp.addRow(4, lblCustomer, txtCustomerId);
+        gp.addRow(5, btnSave, btnCancel);
 
-        Scene scene = new Scene(gp, 400, 300);
+        Scene scene = new Scene(gp, 400, 350);
         setScene(scene);
     }
 
@@ -67,28 +73,30 @@ public class OrderForm extends Stage {
         try {
             int id = Integer.parseInt(txtId.getText());
             LocalDate orderDate = dpOrderDate.getValue();
+            LocalDate deliveryDate = dpDeliveryDate.getValue();
             String status = txtStatus.getText();
             int customerId = Integer.parseInt(txtCustomerId.getText());
 
             boolean ok;
-            if(order == null) {
-                Order newOrder = new Order(id, orderDate, status, customerId);
+            if (order == null) {
+                Order newOrder = new Order(id, customerId, status, BigDecimal.ZERO, orderDate, deliveryDate);
                 ok = orderDAO.insert(newOrder);
             } else {
                 order.setOrderDate(orderDate);
+                order.setDeliveryDate(deliveryDate);
                 order.setStatus(status);
-                order.setCustomerId(customerId);
+                order.setCustomerID(customerId);
                 ok = orderDAO.update(order);
             }
-            if(ok) {
+            if (ok) {
                 showAlert("Pedido salvo com sucesso!");
-                if(onSave != null) onSave.run();
+                if (onSave != null) onSave.run();
                 close();
             } else {
-                showAlert("Erro salvando pedido.");
+                showAlert("Erro ao salvar pedido.");
             }
         } catch (NumberFormatException ex) {
-            showAlert("Input numérico inválido.");
+            showAlert("Entrada numérica inválida.");
         }
     }
 

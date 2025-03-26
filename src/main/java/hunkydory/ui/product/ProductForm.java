@@ -4,23 +4,28 @@ import hunkydory.dao.ProductDAO;
 import hunkydory.model.Product;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.math.BigDecimal;
 
 public class ProductForm extends Stage {
-    private TextField txtId;
-    private TextField txtName;
-    private TextField txtPrice;
-    private TextField txtDescription;
-    private TextField txtCategory;
-    private TextField txtSupplierCNPJ;
+    private final TextField txtId;
+    private final TextField txtName;
+    private final TextField txtPrice;
+    private final TextField txtStock;
+    private final TextField txtDescription;
+    private final TextField txtCategory;
+    private final TextField txtSupplierID;
 
     private Runnable onSave;
-    private ProductDAO productDAO;
-    private Product product; // null indicates new product
+    private final ProductDAO productDAO;
+    private final Product product;
 
     public ProductForm(Product product, ProductDAO dao) {
         this.product = product;
@@ -34,32 +39,30 @@ public class ProductForm extends Stage {
         gp.setVgap(10);
         gp.setPadding(new Insets(10));
 
-        Label lblId = new Label("ID:"); // TODO: Deve ser autoincrementado
+        Label lblId = new Label("ID:");
         txtId = new TextField();
-
         Label lblName = new Label("Nome:");
         txtName = new TextField();
-
         Label lblPrice = new Label("Preço:");
         txtPrice = new TextField();
-
+        Label lblStock = new Label("Estoque:");
+        txtStock = new TextField();
         Label lblDescription = new Label("Descrição:");
         txtDescription = new TextField();
-
-        Label lblCategory = new Label("Categoria:");
+        Label lblCategory = new Label("ID da Categoria:");
         txtCategory = new TextField();
+        Label lblSupplierID = new Label("ID do Fornecedor:");
+        txtSupplierID = new TextField();
 
-        Label lblSupplierId = new Label("ID do Fornecedor:");
-        txtSupplierCNPJ = new TextField(); // TODO: Checar se existe fornecedor com esse ID
-
-        if(product != null) {
-            txtId.setText(String.valueOf(product.getIdProduct()));
+        if (product != null) {
+            txtId.setText(String.valueOf(product.getProductID()));
             txtId.setDisable(true);
             txtName.setText(product.getName());
             txtPrice.setText(product.getPrice().toString());
+            txtStock.setText(String.valueOf(product.getStock()));
             txtDescription.setText(product.getDescription());
-            txtCategory.setText(product.getCategory());
-            txtSupplierCNPJ.setText(product.getSupplierCNPJ());
+            txtCategory.setText(String.valueOf(product.getCategoryID()));
+            txtSupplierID.setText(String.valueOf(product.getSupplierID()));
         }
 
         Button btnSave = new Button("Salvar");
@@ -70,12 +73,13 @@ public class ProductForm extends Stage {
         gp.addRow(0, lblId, txtId);
         gp.addRow(1, lblName, txtName);
         gp.addRow(2, lblPrice, txtPrice);
-        gp.addRow(3, lblDescription, txtDescription);
-        gp.addRow(4, lblCategory, txtCategory);
-        gp.addRow(5, lblSupplierId, txtSupplierCNPJ);
-        gp.addRow(6, btnSave, btnCancel);
+        gp.addRow(3, lblStock, txtStock);
+        gp.addRow(4, lblDescription, txtDescription);
+        gp.addRow(5, lblCategory, txtCategory);
+        gp.addRow(6, lblSupplierID, txtSupplierID);
+        gp.addRow(7, btnSave, btnCancel);
 
-        Scene scene = new Scene(gp, 400, 300);
+        Scene scene = new Scene(gp, 400, 350);
         setScene(scene);
     }
 
@@ -84,32 +88,34 @@ public class ProductForm extends Stage {
             int id = Integer.parseInt(txtId.getText());
             String name = txtName.getText();
             BigDecimal price = new BigDecimal(txtPrice.getText());
+            int stock = Integer.parseInt(txtStock.getText());
             String description = txtDescription.getText();
-            String category = txtCategory.getText();
-            String supplierCNPJ = txtSupplierCNPJ.getText();
+            int categoryId = Integer.parseInt(txtCategory.getText());
+            int supplierId = Integer.parseInt(txtSupplierID.getText());
 
             boolean ok;
-            if(product == null) {
-                Product newProduct = new Product(id, name, price, description, category, supplierCNPJ);
+            if (product == null) {
+                Product newProduct = new Product(id, categoryId, supplierId, name, price, stock, description);
                 ok = productDAO.insert(newProduct);
             } else {
                 product.setName(name);
                 product.setPrice(price);
+                product.setStock(stock);
                 product.setDescription(description);
-                product.setCategory(category);
-                product.setSupplierCNPJ(supplierCNPJ);
+                product.setCategoryID(categoryId);
+                product.setSupplierID(supplierId);
                 ok = productDAO.update(product);
             }
 
-            if(ok) {
+            if (ok) {
                 showAlert("Produto salvo.");
-                if(onSave != null) onSave.run();
+                if (onSave != null) onSave.run();
                 close();
             } else {
                 showAlert("Erro ao salvar produto.");
             }
         } catch (NumberFormatException ex) {
-            showAlert("Input numérico inválido.");
+            showAlert("Entrada numérica inválida.");
         }
     }
 
