@@ -4,39 +4,47 @@ import hunkydory.infrastructure.ConnectionFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-@SuppressWarnings("CallToPrintStackTrace")
 public class AdvancedSQLScreen extends BorderPane {
 
     private final TextArea sqlTextArea;
     private final TableView<ObservableList<String>> tableView;
     private final Label lblStatus;
 
-    public AdvancedSQLScreen(Stage mainStage) {
+    public AdvancedSQLScreen() {
         setPadding(new Insets(10));
 
-        // TABELA DE RESULTADO
         tableView = new TableView<>();
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        // Envolvendo a tabela em um TitledPane
-        TitledPane titledPane = new TitledPane("Resultados da Consulta", tableView);
+        TitledPane titledPane = new TitledPane("Query Results", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        // ÁREA DE QUERY
         sqlTextArea = new TextArea();
-        sqlTextArea.setPromptText("Digite sua query SQL aqui...");
+        sqlTextArea.setPromptText("Enter your SQL query here...");
         sqlTextArea.setPrefRowCount(4);
         sqlTextArea.setWrapText(true);
         sqlTextArea.setMinHeight(80);
 
-        Button btnExecute = new Button("Executar Query");
+        Button btnExecute = new Button("Execute Query");
         btnExecute.setOnAction(e -> executeQuery());
 
         lblStatus = new Label();
@@ -45,7 +53,7 @@ public class AdvancedSQLScreen extends BorderPane {
         HBox actions = new HBox(10, btnExecute, lblStatus);
         actions.setPadding(new Insets(10, 0, 0, 0));
 
-        VBox contentBox = new VBox(10, titledPane, new Label("Query SQL:"), sqlTextArea, actions);
+        VBox contentBox = new VBox(10, titledPane, new Label("SQL Query:"), sqlTextArea, actions);
         contentBox.setPadding(new Insets(10));
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
@@ -55,7 +63,7 @@ public class AdvancedSQLScreen extends BorderPane {
     private void executeQuery() {
         String query = sqlTextArea.getText().trim();
         if (query.isEmpty()) {
-            lblStatus.setText("Digite uma query válida.");
+            lblStatus.setText("Enter a valid query.");
             return;
         }
 
@@ -65,16 +73,17 @@ public class AdvancedSQLScreen extends BorderPane {
             if (query.toLowerCase().startsWith("select")) {
                 ResultSet rs = stmt.executeQuery(query);
                 buildData(rs);
-                lblStatus.setText("Query executada com sucesso.");
+                lblStatus.setText("Query executed successfully.");
             } else {
                 int affected = stmt.executeUpdate(query);
                 tableView.getColumns().clear();
                 tableView.getItems().clear();
-                lblStatus.setText("Query executada com sucesso. Linhas afetadas: " + affected);
+                lblStatus.setText("Query executed successfully. Rows affected: " + affected);
             }
 
         } catch (SQLException ex) {
-            lblStatus.setText("Erro: " + ex.getMessage());
+            lblStatus.setText("Error: " + ex.getMessage());
+            //noinspection CallToPrintStackTrace
             ex.printStackTrace();
         }
     }
@@ -90,7 +99,7 @@ public class AdvancedSQLScreen extends BorderPane {
             final int j = i;
             TableColumn<ObservableList<String>, String> col = new TableColumn<>(rsmd.getColumnName(i));
             col.setCellValueFactory(cellData ->
-                    new javafx.beans.property.SimpleStringProperty(cellData.getValue().get(j - 1))
+                    new SimpleStringProperty(cellData.getValue().get(j - 1))
             );
             col.setMinWidth(100);
             tableView.getColumns().add(col);

@@ -8,91 +8,89 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.util.List;
 
 public class CustomerScreen extends VBox {
-
     private final TableView<Customer> tableView;
     private final ObservableList<Customer> data;
-    private final CustomerDAO costumerDAO = new CustomerDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
 
+    @SuppressWarnings("unchecked")
     public CustomerScreen(Stage mainStage) {
         setSpacing(10);
         setPadding(new Insets(10));
 
-        // Criação da TableView
         tableView = new TableView<>();
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        // Colunas da tabela
         TableColumn<Customer, Integer> colID = new TableColumn<>("ID");
         colID.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().getIdCustomer()));
+                new SimpleObjectProperty<>(cellData.getValue().getCustomerID()));
         colID.setPrefWidth(50);
         colID.setMinWidth(50);
         colID.setMaxWidth(70);
 
-        TableColumn<Customer, String> colNome = new TableColumn<>("Nome");
-        colNome.setCellValueFactory(cellData ->
+        TableColumn<Customer, String> colName = new TableColumn<>("Name");
+        colName.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getName()));
 
         TableColumn<Customer, String> colEmail = new TableColumn<>("Email");
         colEmail.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getEmail()));
 
-        TableColumn<Customer, String> colPhone = new TableColumn<>("Telefone");
+        TableColumn<Customer, String> colPhone = new TableColumn<>("Phone");
         colPhone.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getPhone()));
 
-        TableColumn<Customer, String> colAddress = new TableColumn<>("Endereço");
-        colAddress.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().getAddress()));
-
-        tableView.getColumns().addAll(colID, colNome, colEmail, colPhone, colAddress);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.getColumns().addAll(colID, colName, colEmail, colPhone);
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
-        // Envolvendo a TableView num TitledPane para melhor apresentação
-        TitledPane titledPane = new TitledPane("Clientes Cadastrados", tableView);
+        TitledPane titledPane = new TitledPane("Registered Customers", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        // Botões de ação
-        Button btnNew = new Button("Novo Cliente");
+        Button btnNew = new Button("New Customer");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Editar");
+        Button btnEdit = new Button("Edit");
         btnEdit.setOnAction(e -> {
             Customer selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Selecione um cliente para editar.");
+                showAlert("Select a customer to edit.");
             }
         });
 
-        Button btnDelete = new Button("Excluir");
+        Button btnDelete = new Button("Delete");
         btnDelete.setOnAction(e -> {
             Customer selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                boolean ok = costumerDAO.delete(selected.getIdCustomer());
+                boolean ok = customerDAO.delete(selected.getCustomerID());
                 if (ok) {
-                    showAlert("Cliente excluído com sucesso!");
+                    showAlert("Customer deleted successfully!");
                     loadData();
                 } else {
-                    showAlert("Erro ao excluir cliente.");
+                    showAlert("Error deleting customer.");
                 }
             } else {
-                showAlert("Selecione um cliente para excluir.");
+                showAlert("Select a customer to delete.");
             }
         });
 
-        Button btnBack = new Button("Voltar");
+        Button btnBack = new Button("Back");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);
@@ -104,12 +102,12 @@ public class CustomerScreen extends VBox {
 
     private void loadData() {
         data.clear();
-        List<Customer> list = costumerDAO.listAll();
+        List<Customer> list = customerDAO.listAll();
         data.addAll(list);
     }
 
-    private void openForm(Customer c) {
-        CustomerForm form = new CustomerForm(c, costumerDAO);
+    private void openForm(Customer customer) {
+        CustomerForm form = new CustomerForm(customer, customerDAO);
         form.setOnSave(this::loadData);
         form.showAndWait();
     }

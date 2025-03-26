@@ -7,77 +7,81 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.util.List;
 
 public class SupplierScreen extends VBox {
-    private TableView<Supplier> tableView;
-    private ObservableList<Supplier> data;
+    private final TableView<Supplier> tableView;
+    private final ObservableList<Supplier> data;
     private final SupplierDAO supplierDAO = new SupplierDAO();
 
     public SupplierScreen(Stage mainStage) {
         setSpacing(10);
         setPadding(new Insets(10));
 
-        // Criação da TableView
         tableView = new TableView<>();
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        // Definição das colunas
-        TableColumn<Supplier, String> colCNPJ = new TableColumn<>("CNPJ");
-        colCNPJ.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().getCNPJ()));
+        TableColumn<Supplier, Integer> colID = new TableColumn<>("Supplier ID");
+        colID.setCellValueFactory(cellData ->
+                new SimpleObjectProperty<>(cellData.getValue().getSupplierID()));
 
-        TableColumn<Supplier, String> colName = new TableColumn<>("Nome");
+        TableColumn<Supplier, String> colName = new TableColumn<>("Name");
         colName.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getName()));
 
-        TableColumn<Supplier, String> colContact = new TableColumn<>("Contato");
+        TableColumn<Supplier, String> colContact = new TableColumn<>("Contact");
         colContact.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getContact()));
 
-        tableView.getColumns().addAll(colCNPJ, colName, colContact);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        //noinspection unchecked
+        tableView.getColumns().addAll(colID, colName, colContact);
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        // TitledPane
-        TitledPane titledPane = new TitledPane("Fornecedores", tableView);
+        TitledPane titledPane = new TitledPane("Suppliers", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        // Botões
-        Button btnNew = new Button("Novo Fornecedor");
+        Button btnNew = new Button("New Supplier");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Editar");
+        Button btnEdit = new Button("Edit");
         btnEdit.setOnAction(e -> {
             Supplier selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Por favor, selecione um fornecedor para editar.");
+                showAlert("Please select a supplier to edit.");
             }
         });
 
-        Button btnDelete = new Button("Deletar");
+        Button btnDelete = new Button("Delete");
         btnDelete.setOnAction(e -> {
             Supplier selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                boolean ok = supplierDAO.delete(selected.getCNPJ());
+                boolean ok = supplierDAO.delete(selected.getSupplierID());
                 if(ok) {
-                    showAlert("Fornecedor deletado.");
+                    showAlert("Supplier deleted.");
                     loadData();
                 } else {
-                    showAlert("Erro ao deletar fornecedor.");
+                    showAlert("Error deleting supplier.");
                 }
             } else {
-                showAlert("Por favor, selecione um fornecedor para deletar.");
+                showAlert("Please select a supplier to delete.");
             }
         });
 
-        Button btnBack = new Button("Voltar");
+        Button btnBack = new Button("Back");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);
