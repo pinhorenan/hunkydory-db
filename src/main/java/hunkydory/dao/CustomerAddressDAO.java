@@ -125,4 +125,33 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
         }
         return null;
     }
+
+    public CustomerAddress searchByCustomerID(int customerID) {
+        String sql = "SELECT id_endereco, rua, numero, cidade, estado, cep, complemento, id_cliente " +
+                "FROM endereco_cliente WHERE id_cliente = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, customerID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CustomerAddress address = new CustomerAddress(
+                            rs.getInt("id_endereco"),
+                            rs.getString("rua"),
+                            rs.getString("numero"),
+                            rs.getString("cidade"),
+                            rs.getString("estado"),
+                            rs.getString("cep"),
+                            rs.getString("complemento")
+                    );
+                    address.setCustomerID(rs.getInt("id_cliente"));
+                    return address;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

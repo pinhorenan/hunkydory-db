@@ -1,6 +1,7 @@
 package hunkydory.ui;
 
 import hunkydory.ui.customer.CustomerScreen;
+import hunkydory.ui.customer.CustomerAddressScreen;
 import hunkydory.ui.order.OrderScreen;
 import hunkydory.ui.product.ProductScreen;
 import hunkydory.ui.supplier.SupplierScreen;
@@ -33,10 +34,13 @@ public class MainScreen extends BorderPane {
         Button btnInventory = new Button("Estoque");
         btnInventory.setOnAction(e -> setCenter(new InventoryScreen(mainStage)));
 
+        Button btnAddresses = new Button("Endereços");
+        btnAddresses.setOnAction(e -> setCenter(new CustomerAddressScreen(mainStage)));
+
         Button btnSQL = new Button("Consultas SQL");
         btnSQL.setOnAction(e -> setCenter(new AdvancedSQLScreen()));
 
-        ToolBar toolBar = new ToolBar(btnCustomers, btnProducts, btnSuppliers, btnOrders, btnInventory, btnSQL);
+        ToolBar toolBar = new ToolBar(btnCustomers, btnProducts, btnSuppliers, btnOrders, btnInventory, btnAddresses, btnSQL);
         toolBar.setPadding(new Insets(10));
         setTop(toolBar);
 

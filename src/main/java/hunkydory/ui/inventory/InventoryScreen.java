@@ -9,9 +9,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -19,21 +19,22 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class InventoryScreen extends VBox {
-    @SuppressWarnings("FieldCanBeLocal")
-    private final TableView<ObservableList<String>> tableView;
     private final ObservableList<ObservableList<String>> data;
     private final ProductDAO productDAO = new ProductDAO();
 
-    @SuppressWarnings("unchecked")
     public InventoryScreen(Stage mainStage) {
         setSpacing(10);
         setPadding(new Insets(10));
 
-        tableView = new TableView<>();
+        Label title = new Label("Estoque");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
+
+        TableView<ObservableList<String>> tableView = new TableView<>();
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        TableColumn<ObservableList<String>, String> colID = new TableColumn<>("ID Produto");
+        TableColumn<ObservableList<String>, String> colID = new TableColumn<>("ID");
         colID.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getFirst()));
         colID.setPrefWidth(50);
@@ -46,12 +47,10 @@ public class InventoryScreen extends VBox {
         colQuantity.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().get(2)));
 
+        //noinspection unchecked
         tableView.getColumns().addAll(colID, colProductName, colQuantity);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        TitledPane titledPane = new TitledPane("Estoque", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
 
         Button btnUpdate = new Button("Atualizar estoque");
         btnUpdate.setOnAction(e -> loadData());
@@ -60,10 +59,9 @@ public class InventoryScreen extends VBox {
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnUpdate, btnBack);
-        hboxButtons.setPadding(new Insets(10));
         hboxButtons.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(titledPane, hboxButtons);
+        getChildren().addAll(title, tableView, hboxButtons);
         loadData();
     }
 

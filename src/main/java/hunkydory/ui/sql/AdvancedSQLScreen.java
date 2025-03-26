@@ -1,21 +1,13 @@
 package hunkydory.ui.sql;
 
 import hunkydory.infrastructure.ConnectionFactory;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -29,33 +21,48 @@ public class AdvancedSQLScreen extends BorderPane {
     private final Label lblStatus;
 
     public AdvancedSQLScreen() {
-        setPadding(new Insets(10));
-
-        tableView = new TableView<>();
-        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        TitledPane titledPane = new TitledPane("Resultados da Consulta", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
-
         sqlTextArea = new TextArea();
         sqlTextArea.setPromptText("Digite sua consulta SQL aqui...");
-        sqlTextArea.setPrefRowCount(4);
         sqlTextArea.setWrapText(true);
-        sqlTextArea.setMinHeight(80);
+        VBox.setVgrow(sqlTextArea, Priority.ALWAYS);
 
         Button btnExecute = new Button("Executar Consulta");
+        btnExecute.setMaxWidth(Double.MAX_VALUE);
         btnExecute.setOnAction(e -> executeQuery());
+
+        Button btnExamples = new Button("Consultas Exemplo");
+        btnExamples.setMaxWidth(Double.MAX_VALUE);
+        btnExamples.setOnAction(e -> new ExampleQueriesDialog().showAndWait());
+
+        VBox buttonBox = new VBox(5, btnExecute, btnExamples);
+        buttonBox.setFillWidth(true);
 
         lblStatus = new Label();
         lblStatus.setWrapText(true);
 
-        HBox actions = new HBox(10, btnExecute, lblStatus);
-        actions.setPadding(new Insets(10, 0, 0, 0));
+        VBox leftPanel = new VBox(10, sqlTextArea, buttonBox, lblStatus);
+        leftPanel.setPadding(new Insets(10));
+        leftPanel.setPrefWidth(300);
+        leftPanel.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(sqlTextArea, Priority.ALWAYS);
+        VBox.setVgrow(btnExecute, Priority.NEVER);
+        VBox.setVgrow(lblStatus, Priority.NEVER);
 
-        VBox contentBox = new VBox(10, titledPane, new Label("Consulta SQL:"), sqlTextArea, actions);
+        tableView = new TableView<>();
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        Label title = new Label("Resultados da Consulta");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
+
+        VBox rightPanel = new VBox(10, title, tableView);
+        rightPanel.setPadding(new Insets(10));
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        HBox contentBox = new HBox(leftPanel, rightPanel);
         contentBox.setPadding(new Insets(10));
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        HBox.setHgrow(rightPanel, Priority.ALWAYS);
 
         setCenter(contentBox);
     }

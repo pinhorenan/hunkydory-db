@@ -7,12 +7,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -28,11 +29,15 @@ public class SupplierScreen extends VBox {
         setSpacing(10);
         setPadding(new Insets(10));
 
+        Label title = new Label("Fornecedores");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
+
         tableView = new TableView<>();
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        TableColumn<Supplier, Integer> colID = new TableColumn<>("ID Fornecedor");
+        TableColumn<Supplier, Integer> colID = new TableColumn<>("ID");
         colID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getSupplierID()));
 
@@ -47,10 +52,7 @@ public class SupplierScreen extends VBox {
         //noinspection unchecked
         tableView.getColumns().addAll(colID, colName, colContact);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        TitledPane titledPane = new TitledPane("Fornecedores", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
 
         Button btnNew = new Button("Novo Fornecedor");
         btnNew.setOnAction(e -> openForm(null));
@@ -85,8 +87,9 @@ public class SupplierScreen extends VBox {
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);
+        hboxButtons.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(titledPane, hboxButtons);
+        getChildren().addAll(title, tableView, hboxButtons);
         loadData();
     }
 

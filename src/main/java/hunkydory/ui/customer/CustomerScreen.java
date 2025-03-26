@@ -1,31 +1,34 @@
 package hunkydory.ui.customer;
 
 import hunkydory.dao.CustomerDAO;
+import hunkydory.dao.CustomerAddressDAO;
 import hunkydory.model.Customer;
+import hunkydory.model.CustomerAddress;
 import hunkydory.ui.MainScreen;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomerScreen extends VBox {
     private final TableView<Customer> tableView;
     private final ObservableList<Customer> data;
     private final CustomerDAO customerDAO = new CustomerDAO();
+    private final CustomerAddressDAO addressDAO = new CustomerAddressDAO();
 
-    @SuppressWarnings("unchecked")
+    private final Map<Integer, CustomerAddress> addressMap = new HashMap<>();
+
     public CustomerScreen(Stage mainStage) {
         setSpacing(10);
         setPadding(new Insets(10));
@@ -41,7 +44,7 @@ public class CustomerScreen extends VBox {
         colID.setMinWidth(50);
         colID.setMaxWidth(70);
 
-        TableColumn<Customer, String> colName = new TableColumn<>("Name");
+        TableColumn<Customer, String> colName = new TableColumn<>("Nome");
         colName.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getName()));
 
@@ -53,13 +56,24 @@ public class CustomerScreen extends VBox {
         colPhone.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getPhone()));
 
-        tableView.getColumns().addAll(colID, colName, colEmail, colPhone);
+        TableColumn<Customer, String> colAddress = new TableColumn<>("Endereço");
+        colAddress.setCellValueFactory(cellData -> {
+            int customerId = cellData.getValue().getCustomerID();
+            CustomerAddress addr = addressMap.get(customerId);
+            String addressStr = (addr != null)
+                    ? addr.getStreet() + ", " + addr.getNumber() + " - " + addr.getCity() + ", " + addr.getState() + " (" + addr.getZipCode() + ")"
+                    : "Não cadastrado";
+            return new SimpleStringProperty(addressStr);
+        });
+
+        //noinspection unchecked
+        tableView.getColumns().addAll(colID, colName, colEmail, colPhone, colAddress);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
-        TitledPane titledPane = new TitledPane("Clientes Registrados", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        Label title = new Label("Clientes Registrados");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
 
         Button btnNew = new Button("Novo Cliente");
         btnNew.setOnAction(e -> openForm(null));
@@ -96,14 +110,22 @@ public class CustomerScreen extends VBox {
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);
         hboxButtons.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(titledPane, hboxButtons);
+
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+        getChildren().addAll(title, tableView, hboxButtons);
         loadData();
     }
 
     private void loadData() {
         data.clear();
-        List<Customer> list = customerDAO.listAll();
-        data.addAll(list);
+        addressMap.clear();
+        List<Customer> customerList = customerDAO.listAll();
+        data.addAll(customerList);
+
+        List<CustomerAddress> addressList = addressDAO.listAll();
+        for (CustomerAddress addr : addressList) {
+            addressMap.put(addr.getCustomerID(), addr);
+        }
     }
 
     private void openForm(Customer customer) {

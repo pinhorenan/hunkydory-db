@@ -10,9 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -26,7 +26,6 @@ public class OrderItemScreen extends Stage {
     private final OrderItemDAO orderItemDAO = new OrderItemDAO();
     private final int orderId;
 
-    @SuppressWarnings("unchecked")
     public OrderItemScreen(int orderId) {
         this.orderId = orderId;
         setTitle("Gerenciar Itens da Compra (Pedido: " + orderId + ")");
@@ -34,6 +33,10 @@ public class OrderItemScreen extends Stage {
 
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
+
+        Label title = new Label("Itens do Pedido");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
 
         tableView = new TableView<>();
         data = FXCollections.observableArrayList();
@@ -55,12 +58,10 @@ public class OrderItemScreen extends Stage {
         colUnitPrice.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getUnitPrice().toString()));
 
+        //noinspection unchecked
         tableView.getColumns().addAll(colOrderID, colProductID, colQuantity, colUnitPrice);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        TitledPane titledPane = new TitledPane("Items do pedido", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
 
         Button btnNew = new Button("Novo Item");
         btnNew.setOnAction(e -> openForm(null));
@@ -96,8 +97,10 @@ public class OrderItemScreen extends Stage {
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnClose);
 
-        root.getChildren().addAll(titledPane, hboxButtons);
-        Scene scene = new Scene(root, 550, 400);
+        root.getChildren().addAll(title, tableView, hboxButtons);
+        VBox.setVgrow(root, Priority.ALWAYS);
+
+        Scene scene = new Scene(root, 600, 400);
         setScene(scene);
         loadData();
     }

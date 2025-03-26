@@ -7,16 +7,18 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -25,10 +27,13 @@ public class OrderScreen extends VBox {
     private final ObservableList<Order> data;
     private final OrderDAO orderDAO = new OrderDAO();
 
-    @SuppressWarnings("unchecked")
     public OrderScreen(Stage mainStage) {
         setSpacing(10);
         setPadding(new Insets(10));
+
+        Label title = new Label("Histórico de Pedidos");
+        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        VBox.setMargin(title, new Insets(0, 0, 5, 0));
 
         tableView = new TableView<>();
         data = FXCollections.observableArrayList();
@@ -52,12 +57,10 @@ public class OrderScreen extends VBox {
         colCustomerID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getCustomerID()));
 
+        //noinspection unchecked
         tableView.getColumns().addAll(colID, colDate, colStatus, colCustomerID);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        TitledPane titledPane = new TitledPane("Histórico de Pedidos", tableView);
-        titledPane.setCollapsible(false);
-        VBox.setVgrow(titledPane, Priority.ALWAYS);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
 
         Button btnNew = new Button("Novo Pedido");
         btnNew.setOnAction(e -> openForm(null));
@@ -103,8 +106,9 @@ public class OrderScreen extends VBox {
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnManageItems, btnBack);
+        hboxButtons.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(titledPane, hboxButtons);
+        getChildren().addAll(title, tableView, hboxButtons);
         loadData();
     }
 
