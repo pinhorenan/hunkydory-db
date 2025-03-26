@@ -40,7 +40,7 @@ public class OrderScreen extends VBox {
         colID.setPrefWidth(50);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        TableColumn<Order, String> colDate = new TableColumn<>("Order Date");
+        TableColumn<Order, String> colDate = new TableColumn<>("Data do Pedido");
         colDate.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getOrderDate().format(dtf)));
 
@@ -48,58 +48,58 @@ public class OrderScreen extends VBox {
         colStatus.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getStatus()));
 
-        TableColumn<Order, Integer> colCustomerID = new TableColumn<>("Customer ID");
+        TableColumn<Order, Integer> colCustomerID = new TableColumn<>("ID Cliente");
         colCustomerID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getCustomerID()));
 
         tableView.getColumns().addAll(colID, colDate, colStatus, colCustomerID);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Manage Orders", tableView);
+        TitledPane titledPane = new TitledPane("Histórico de Pedidos", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnNew = new Button("New Order");
+        Button btnNew = new Button("Novo Pedido");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Edit");
+        Button btnEdit = new Button("Editar");
         btnEdit.setOnAction(e -> {
             Order selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Please select an order to edit.");
+                showAlert("Por favor, selecione um pedido para editar.");
             }
         });
 
-        Button btnDelete = new Button("Delete");
+        Button btnDelete = new Button("Excluir");
         btnDelete.setOnAction(e -> {
             Order selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 boolean ok = orderDAO.delete(selected.getOrderID());
                 if(ok) {
-                    showAlert("Order deleted.");
+                    showAlert("Pedido excluído.");
                     loadData();
                 } else {
-                    showAlert("Error deleting order.");
+                    showAlert("Erro ao excluír pedido");
                 }
             } else {
-                showAlert("Please select an order to delete.");
+                showAlert("Por favor, selecione um pedido para excluir.");
             }
         });
 
-        Button btnManageItems = new Button("Manage Items");
+        Button btnManageItems = new Button("Gerenciar Itens");
         btnManageItems.setOnAction(e -> {
             Order selected = tableView.getSelectionModel().getSelectedItem();
             if(selected != null) {
                 OrderItemScreen itemScreen = new OrderItemScreen(selected.getOrderID());
                 itemScreen.showAndWait();
             } else {
-                showAlert("Please select an order to manage items.");
+                showAlert("Por favor, selecione um pedido para editar os itens.");
             }
         });
 
-        Button btnBack = new Button("Back");
+        Button btnBack = new Button("Voltar");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnManageItems, btnBack);

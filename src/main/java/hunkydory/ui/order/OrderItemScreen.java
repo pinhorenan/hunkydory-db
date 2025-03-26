@@ -29,7 +29,7 @@ public class OrderItemScreen extends Stage {
     @SuppressWarnings("unchecked")
     public OrderItemScreen(int orderId) {
         this.orderId = orderId;
-        setTitle("Manage Order Items (Order " + orderId + ")");
+        setTitle("Gerenciar Itens da Compra (Pedido: " + orderId + ")");
         initModality(Modality.APPLICATION_MODAL);
 
         VBox root = new VBox(10);
@@ -39,59 +39,59 @@ public class OrderItemScreen extends Stage {
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        TableColumn<OrderItem, Integer> colOrderID = new TableColumn<>("Order ID");
+        TableColumn<OrderItem, Integer> colOrderID = new TableColumn<>("ID Pedido");
         colOrderID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getOrderID()));
 
-        TableColumn<OrderItem, Integer> colProductID = new TableColumn<>("Product ID");
+        TableColumn<OrderItem, Integer> colProductID = new TableColumn<>("ID Produto");
         colProductID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getProductID()));
 
-        TableColumn<OrderItem, Integer> colQuantity = new TableColumn<>("Quantity");
+        TableColumn<OrderItem, Integer> colQuantity = new TableColumn<>("Quantidade");
         colQuantity.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getQuantity()));
 
-        TableColumn<OrderItem, String> colUnitPrice = new TableColumn<>("Unit Price");
+        TableColumn<OrderItem, String> colUnitPrice = new TableColumn<>("Preço unitário");
         colUnitPrice.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getUnitPrice().toString()));
 
         tableView.getColumns().addAll(colOrderID, colProductID, colQuantity, colUnitPrice);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Order Items", tableView);
+        TitledPane titledPane = new TitledPane("Items do pedido", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnNew = new Button("New Item");
+        Button btnNew = new Button("Novo Item");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Edit Item");
+        Button btnEdit = new Button("Editar Item");
         btnEdit.setOnAction(e -> {
             OrderItem selected = tableView.getSelectionModel().getSelectedItem();
             if(selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Select an item to edit.");
+                showAlert("Selecione um item para editar.");
             }
         });
 
-        Button btnDelete = new Button("Delete Item");
+        Button btnDelete = new Button("Excluir Item");
         btnDelete.setOnAction(e -> {
             OrderItem selected = tableView.getSelectionModel().getSelectedItem();
             if(selected != null) {
                 boolean ok = orderItemDAO.delete(selected.getOrderID(), selected.getProductID());
                 if(ok) {
-                    showAlert("Item deleted.");
+                    showAlert("Item excluído.");
                     loadData();
                 } else {
-                    showAlert("Error deleting item.");
+                    showAlert("Erro ao excluir item.");
                 }
             } else {
-                showAlert("Select an item to delete.");
+                showAlert("Selecione um item para excluir.");
             }
         });
 
-        Button btnClose = new Button("Close");
+        Button btnClose = new Button("Fechar");
         btnClose.setOnAction(e -> close());
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnClose);

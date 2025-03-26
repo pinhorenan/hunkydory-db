@@ -33,30 +33,30 @@ public class InventoryScreen extends VBox {
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        TableColumn<ObservableList<String>, String> colID = new TableColumn<>("ID");
+        TableColumn<ObservableList<String>, String> colID = new TableColumn<>("ID Produto");
         colID.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getFirst()));
         colID.setPrefWidth(50);
 
-        TableColumn<ObservableList<String>, String> colProductName = new TableColumn<>("Product Name");
+        TableColumn<ObservableList<String>, String> colProductName = new TableColumn<>("Nome do Produto");
         colProductName.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().get(1)));
 
-        TableColumn<ObservableList<String>, String> colQuantity = new TableColumn<>("Quantity Available");
+        TableColumn<ObservableList<String>, String> colQuantity = new TableColumn<>("Quantidade Disponível");
         colQuantity.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().get(2)));
 
         tableView.getColumns().addAll(colID, colProductName, colQuantity);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Inventory", tableView);
+        TitledPane titledPane = new TitledPane("Estoque", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnUpdate = new Button("Update Inventory");
+        Button btnUpdate = new Button("Atualizar estoque");
         btnUpdate.setOnAction(e -> loadData());
 
-        Button btnBack = new Button("Back");
+        Button btnBack = new Button("Voltar");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnUpdate, btnBack);

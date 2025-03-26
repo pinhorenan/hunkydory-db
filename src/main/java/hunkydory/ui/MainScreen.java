@@ -18,29 +18,29 @@ import javafx.stage.Stage;
 public class MainScreen extends BorderPane {
 
     public MainScreen(Stage mainStage) {
-        Button btnCustomers = new Button("Customers");
+        Button btnCustomers = new Button("Clientes");
         btnCustomers.setOnAction(e -> setCenter(new CustomerScreen(mainStage)));
 
-        Button btnProducts = new Button("Products");
+        Button btnProducts = new Button("Produtos");
         btnProducts.setOnAction(e -> setCenter(new ProductScreen(mainStage)));
 
-        Button btnSuppliers = new Button("Suppliers");
+        Button btnSuppliers = new Button("Fornecedores");
         btnSuppliers.setOnAction(e -> setCenter(new SupplierScreen(mainStage)));
 
-        Button btnOrders = new Button("Orders");
+        Button btnOrders = new Button("Pedidos");
         btnOrders.setOnAction(e -> setCenter(new OrderScreen(mainStage)));
 
-        Button btnInventory = new Button("Inventory");
+        Button btnInventory = new Button("Estoque");
         btnInventory.setOnAction(e -> setCenter(new InventoryScreen(mainStage)));
 
-        Button btnSQL = new Button("Advanced SQL");
+        Button btnSQL = new Button("Consultas SQL");
         btnSQL.setOnAction(e -> setCenter(new AdvancedSQLScreen()));
 
         ToolBar toolBar = new ToolBar(btnCustomers, btnProducts, btnSuppliers, btnOrders, btnInventory, btnSQL);
         toolBar.setPadding(new Insets(10));
         setTop(toolBar);
 
-        Label lblWelcome = new Label("Welcome to the Hunky Dory Admin Panel!\nSelect an option from the toolbar above.");
+        Label lblWelcome = new Label("Bem vindo ao Hunkydory!");
         lblWelcome.setStyle("-fx-font-size: 18px;");
         lblWelcome.setAlignment(Pos.CENTER);
         lblWelcome.setMaxWidth(Double.MAX_VALUE);

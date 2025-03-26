@@ -32,15 +32,15 @@ public class SupplierScreen extends VBox {
         data = FXCollections.observableArrayList();
         tableView.setItems(data);
 
-        TableColumn<Supplier, Integer> colID = new TableColumn<>("Supplier ID");
+        TableColumn<Supplier, Integer> colID = new TableColumn<>("ID Fornecedor");
         colID.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getSupplierID()));
 
-        TableColumn<Supplier, String> colName = new TableColumn<>("Name");
+        TableColumn<Supplier, String> colName = new TableColumn<>("Nome");
         colName.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getName()));
 
-        TableColumn<Supplier, String> colContact = new TableColumn<>("Contact");
+        TableColumn<Supplier, String> colContact = new TableColumn<>("Contato");
         colContact.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getContact()));
 
@@ -48,40 +48,40 @@ public class SupplierScreen extends VBox {
         tableView.getColumns().addAll(colID, colName, colContact);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Suppliers", tableView);
+        TitledPane titledPane = new TitledPane("Fornecedores", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnNew = new Button("New Supplier");
+        Button btnNew = new Button("Novo Fornecedor");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Edit");
+        Button btnEdit = new Button("Editar");
         btnEdit.setOnAction(e -> {
             Supplier selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Please select a supplier to edit.");
+                showAlert("Por favor, selecione um fornecedor para editar.");
             }
         });
 
-        Button btnDelete = new Button("Delete");
+        Button btnDelete = new Button("Excluir");
         btnDelete.setOnAction(e -> {
             Supplier selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 boolean ok = supplierDAO.delete(selected.getSupplierID());
                 if(ok) {
-                    showAlert("Supplier deleted.");
+                    showAlert("Fornecedor excluído.");
                     loadData();
                 } else {
-                    showAlert("Error deleting supplier.");
+                    showAlert("Erro ao excluir fornecedor.");
                 }
             } else {
-                showAlert("Please select a supplier to delete.");
+                showAlert("Por favor, selecione um fornecedor para excluir.");
             }
         });
 
-        Button btnBack = new Button("Back");
+        Button btnBack = new Button("Voltar");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);

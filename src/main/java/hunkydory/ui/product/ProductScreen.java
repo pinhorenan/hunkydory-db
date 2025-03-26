@@ -39,55 +39,55 @@ public class ProductScreen extends VBox {
         colID.setMinWidth(10);
         colID.setMaxWidth(70);
 
-        TableColumn<Product, String> colName = new TableColumn<>("Name");
+        TableColumn<Product, String> colName = new TableColumn<>("Nome");
         colName.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getName()));
 
-        TableColumn<Product, String> colCategory = new TableColumn<>("Category ID");
+        TableColumn<Product, String> colCategory = new TableColumn<>("ID categoria");
         colCategory.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleObjectProperty<>(String.valueOf(cellData.getValue().getCategoryID())));
 
-        TableColumn<Product, String> colPrice = new TableColumn<>("Price");
+        TableColumn<Product, String> colPrice = new TableColumn<>("Preço");
         colPrice.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getPrice().toString()));
 
         tableView.getColumns().addAll(colID, colName, colCategory, colPrice);
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Product Catalog", tableView);
+        TitledPane titledPane = new TitledPane("Catálogo de Produtos", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnNew = new Button("New Product");
+        Button btnNew = new Button("Novo Produto");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Edit");
+        Button btnEdit = new Button("Editar");
         btnEdit.setOnAction(e -> {
             Product selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Please select a product to edit.");
+                showAlert("Por favor, selecione um produto para editar.");
             }
         });
 
-        Button btnDelete = new Button("Delete");
+        Button btnDelete = new Button("Excluir");
         btnDelete.setOnAction(e -> {
             Product selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 boolean ok = productDAO.delete(selected.getProductID());
                 if (ok) {
-                    showAlert("Product deleted.");
+                    showAlert("Produto excluído.");
                     loadData();
                 } else {
-                    showAlert("Error deleting product.");
+                    showAlert("Erro ao excluír produto.");
                 }
             } else {
-                showAlert("Please select a product to delete.");
+                showAlert("Por favor, selecione o produto para excluir.");
             }
         });
 
-        Button btnBack = new Button("Back");
+        Button btnBack = new Button("Voltar");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);

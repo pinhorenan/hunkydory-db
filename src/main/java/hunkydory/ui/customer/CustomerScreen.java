@@ -49,7 +49,7 @@ public class CustomerScreen extends VBox {
         colEmail.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getEmail()));
 
-        TableColumn<Customer, String> colPhone = new TableColumn<>("Phone");
+        TableColumn<Customer, String> colPhone = new TableColumn<>("Telefone");
         colPhone.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().getPhone()));
 
@@ -57,40 +57,40 @@ public class CustomerScreen extends VBox {
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
-        TitledPane titledPane = new TitledPane("Registered Customers", tableView);
+        TitledPane titledPane = new TitledPane("Clientes Registrados", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
-        Button btnNew = new Button("New Customer");
+        Button btnNew = new Button("Novo Cliente");
         btnNew.setOnAction(e -> openForm(null));
 
-        Button btnEdit = new Button("Edit");
+        Button btnEdit = new Button("Editar");
         btnEdit.setOnAction(e -> {
             Customer selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 openForm(selected);
             } else {
-                showAlert("Select a customer to edit.");
+                showAlert("Selecione um cliente para editar.");
             }
         });
 
-        Button btnDelete = new Button("Delete");
+        Button btnDelete = new Button("Excluir");
         btnDelete.setOnAction(e -> {
             Customer selected = tableView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 boolean ok = customerDAO.delete(selected.getCustomerID());
                 if (ok) {
-                    showAlert("Customer deleted successfully!");
+                    showAlert("Cliente excluído.");
                     loadData();
                 } else {
-                    showAlert("Error deleting customer.");
+                    showAlert("Erro ao excluir cliente.");
                 }
             } else {
-                showAlert("Select a customer to delete.");
+                showAlert("Selecione um cliente para excluir.");
             }
         });
 
-        Button btnBack = new Button("Back");
+        Button btnBack = new Button("Voltar");
         btnBack.setOnAction(e -> mainStage.getScene().setRoot(new MainScreen(mainStage)));
 
         HBox hboxButtons = new HBox(10, btnNew, btnEdit, btnDelete, btnBack);

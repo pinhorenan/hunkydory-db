@@ -34,17 +34,17 @@ public class AdvancedSQLScreen extends BorderPane {
         tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        TitledPane titledPane = new TitledPane("Query Results", tableView);
+        TitledPane titledPane = new TitledPane("Resultados da Consulta", tableView);
         titledPane.setCollapsible(false);
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
         sqlTextArea = new TextArea();
-        sqlTextArea.setPromptText("Enter your SQL query here...");
+        sqlTextArea.setPromptText("Digite sua consulta SQL aqui...");
         sqlTextArea.setPrefRowCount(4);
         sqlTextArea.setWrapText(true);
         sqlTextArea.setMinHeight(80);
 
-        Button btnExecute = new Button("Execute Query");
+        Button btnExecute = new Button("Executar Consulta");
         btnExecute.setOnAction(e -> executeQuery());
 
         lblStatus = new Label();
@@ -53,7 +53,7 @@ public class AdvancedSQLScreen extends BorderPane {
         HBox actions = new HBox(10, btnExecute, lblStatus);
         actions.setPadding(new Insets(10, 0, 0, 0));
 
-        VBox contentBox = new VBox(10, titledPane, new Label("SQL Query:"), sqlTextArea, actions);
+        VBox contentBox = new VBox(10, titledPane, new Label("Consulta SQL:"), sqlTextArea, actions);
         contentBox.setPadding(new Insets(10));
         VBox.setVgrow(titledPane, Priority.ALWAYS);
 
@@ -63,7 +63,7 @@ public class AdvancedSQLScreen extends BorderPane {
     private void executeQuery() {
         String query = sqlTextArea.getText().trim();
         if (query.isEmpty()) {
-            lblStatus.setText("Enter a valid query.");
+            lblStatus.setText("Por favor, insira uma consulta SQL válida.");
             return;
         }
 
@@ -73,16 +73,16 @@ public class AdvancedSQLScreen extends BorderPane {
             if (query.toLowerCase().startsWith("select")) {
                 ResultSet rs = stmt.executeQuery(query);
                 buildData(rs);
-                lblStatus.setText("Query executed successfully.");
+                lblStatus.setText("Consulta executada com sucesso.");
             } else {
                 int affected = stmt.executeUpdate(query);
                 tableView.getColumns().clear();
                 tableView.getItems().clear();
-                lblStatus.setText("Query executed successfully. Rows affected: " + affected);
+                lblStatus.setText("Consulta executada com sucesso. Linhas afetadas: " + affected);
             }
 
         } catch (SQLException ex) {
-            lblStatus.setText("Error: " + ex.getMessage());
+            lblStatus.setText("Erro: " + ex.getMessage());
             //noinspection CallToPrintStackTrace
             ex.printStackTrace();
         }
