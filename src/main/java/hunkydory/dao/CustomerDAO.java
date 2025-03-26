@@ -13,7 +13,6 @@ public class CustomerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
 
     @Override
     public boolean insert(Customer customer) {
-        // We'll assume we want to provide id_cliente manually (SERIAL allows override).
         String sql = "INSERT INTO cliente (id_cliente, nome, telefone, email, senha) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -55,7 +54,6 @@ public class CustomerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
         String sql = "DELETE FROM cliente WHERE id_cliente = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -71,14 +69,13 @@ public class CustomerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 Customer c = new Customer(
                         rs.getInt("id_cliente"),
                         rs.getString("nome"),
-                        rs.getString("telefone"),
                         rs.getString("email"),
-                        rs.getString("senha")
+                        rs.getString("senha"),
+                        rs.getString("telefone")
                 );
                 list.add(c);
             }
@@ -93,16 +90,15 @@ public class CustomerDAO extends BaseDAO<Customer> implements GenericDAO<Custome
         String sql = "SELECT id_cliente, nome, telefone, email, senha FROM cliente WHERE id_cliente = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Customer(
                             rs.getInt("id_cliente"),
                             rs.getString("nome"),
-                            rs.getString("telefone"),
                             rs.getString("email"),
-                            rs.getString("senha")
+                            rs.getString("senha"),
+                            rs.getString("telefone")
                     );
                 }
             }

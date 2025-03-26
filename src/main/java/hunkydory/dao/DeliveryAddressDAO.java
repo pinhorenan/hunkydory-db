@@ -63,7 +63,6 @@ public class DeliveryAddressDAO extends BaseDAO<DeliveryAddress> implements Gene
         String sql = "DELETE FROM endereco_entrega WHERE id_endereco = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, addressID);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -79,7 +78,6 @@ public class DeliveryAddressDAO extends BaseDAO<DeliveryAddress> implements Gene
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 DeliveryAddress da = new DeliveryAddress(
                         rs.getInt("id_endereco"),

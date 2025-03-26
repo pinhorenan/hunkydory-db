@@ -1,12 +1,3 @@
-/*
- * =============================================================================
- *  4) SupplierDAO.java
- *  TABLE: fornecedor
- *     - id_fornecedor (PK)
- *     - nome (NOT NULL)
- *     - contato
- * =============================================================================
- */
 package hunkydory.dao;
 
 import hunkydory.dao.base.BaseDAO;
@@ -22,11 +13,9 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
 
     @Override
     public boolean insert(Supplier supplier) {
-        // We'll assume we want to provide id_fornecedor manually
         String sql = "INSERT INTO fornecedor (id_fornecedor, nome, contato) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, supplier.getSupplierID());
             ps.setString(2, supplier.getName());
             ps.setString(3, supplier.getContact());
@@ -42,7 +31,6 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
         String sql = "UPDATE fornecedor SET nome = ?, contato = ? WHERE id_fornecedor = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, supplier.getName());
             ps.setString(2, supplier.getContact());
             ps.setInt(3, supplier.getSupplierID());
@@ -53,13 +41,11 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
         return false;
     }
 
-    // We'll keep the base signature, but we do delete by id_fornecedor
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM fornecedor WHERE id_fornecedor = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -75,7 +61,6 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 Supplier s = new Supplier(
                         rs.getInt("id_fornecedor"),
@@ -95,7 +80,6 @@ public class SupplierDAO extends BaseDAO<Supplier> implements GenericDAO<Supplie
         String sql = "SELECT id_fornecedor, nome, contato FROM fornecedor WHERE id_fornecedor = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

@@ -1,14 +1,3 @@
-/*
- * =============================================================================
- * 10) ExchangeReturnDAO.java
- *     TABLE: troca_devolucao
- *        - id_solicitacao (PK)
- *        - data_solicitacao (DATE NOT NULL DEFAULT CURRENT_DATE)
- *        - motivo (TEXT)
- *        - status (VARCHAR(50) NOT NULL DEFAULT 'Em análise')
- *        - id_compra (FK)
- * =============================================================================
- */
 package hunkydory.dao;
 
 import hunkydory.dao.base.BaseDAO;
@@ -25,7 +14,6 @@ public class ExchangeReturnDAO extends BaseDAO<ExchangeReturn> implements Generi
 
     @Override
     public boolean insert(ExchangeReturn er) {
-        // We'll assume we can provide the ID manually if needed:
         String sql = "INSERT INTO troca_devolucao (id_solicitacao, data_solicitacao, motivo, status, id_compra) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -69,7 +57,6 @@ public class ExchangeReturnDAO extends BaseDAO<ExchangeReturn> implements Generi
         String sql = "DELETE FROM troca_devolucao WHERE id_solicitacao = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, requestID);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -85,14 +72,13 @@ public class ExchangeReturnDAO extends BaseDAO<ExchangeReturn> implements Generi
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
-                java.sql.Date sqlDate = rs.getDate("data_solicitacao");
-                java.time.LocalDate localDate = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+                Date d = rs.getDate("data_solicitacao");
+                LocalDate dateObj = (d != null) ? d.toLocalDate() : null;
                 ExchangeReturn er = new ExchangeReturn(
                         rs.getInt("id_solicitacao"),
-                        localDate,
                         rs.getInt("id_compra"),
+                        dateObj,
                         rs.getString("motivo"),
                         rs.getString("status")
                 );
@@ -104,23 +90,23 @@ public class ExchangeReturnDAO extends BaseDAO<ExchangeReturn> implements Generi
         return list;
     }
 
-
     @Override
     public ExchangeReturn searchByID(int requestID) {
         String sql = "SELECT id_solicitacao, data_solicitacao, motivo, status, id_compra "
                 + "FROM troca_devolucao WHERE id_solicitacao = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, requestID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    Date d = rs.getDate("data_solicitacao");
+                    LocalDate dateObj = (d != null) ? d.toLocalDate() : null;
                     return new ExchangeReturn(
                             rs.getInt("id_solicitacao"),
-                            rs.getDate("data_solicitacao")
+                            rs.getInt("id_compra"),
+                            dateObj,
                             rs.getString("motivo"),
-                            rs.getString("status"),
-                            rs.getInt("id_compra")
+                            rs.getString("status")
                     );
                 }
             }

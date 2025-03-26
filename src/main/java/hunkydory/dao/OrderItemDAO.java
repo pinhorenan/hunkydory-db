@@ -5,7 +5,6 @@ import hunkydory.dao.base.GenericDAO;
 import hunkydory.model.OrderItem;
 
 import java.sql.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +16,10 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
         String sql = "INSERT INTO item_compra (id_compra, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, item.getOrderID());
             ps.setInt(2, item.getProductID());
             ps.setInt(3, item.getQuantity());
             ps.setBigDecimal(4, item.getUnitPrice());
-
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,12 +33,10 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
                 + "WHERE id_compra = ? AND id_produto = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, item.getQuantity());
             ps.setBigDecimal(2, item.getUnitPrice());
             ps.setInt(3, item.getOrderID());
             ps.setInt(4, item.getProductID());
-
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,7 +44,6 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
         return false;
     }
 
-    // The base delete signature won't work for a composite key, so we override:
     @Override
     public boolean delete(int id) {
         throw new UnsupportedOperationException("Use delete(int orderID, int productID) instead.");
@@ -59,7 +53,6 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
         String sql = "DELETE FROM item_compra WHERE id_compra = ? AND id_produto = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, orderID);
             ps.setInt(2, productID);
             return ps.executeUpdate() > 0;
@@ -76,7 +69,6 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 OrderItem oi = new OrderItem(
                         rs.getInt("id_compra"),
@@ -92,7 +84,6 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
         return list;
     }
 
-    // The base searchByID also won't work for composite key:
     @Override
     public OrderItem searchByID(int id) {
         throw new UnsupportedOperationException("Use searchByID(int orderID, int productID) instead.");
@@ -103,7 +94,6 @@ public class OrderItemDAO extends BaseDAO<OrderItem> implements GenericDAO<Order
                 + "FROM item_compra WHERE id_compra = ? AND id_produto = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, orderID);
             ps.setInt(2, productID);
             try (ResultSet rs = ps.executeQuery()) {

@@ -1,15 +1,3 @@
-/*
- * =============================================================================
- * 11) ReviewDAO.java
- *  TABLE: avaliacao
- *     - id_avaliacao (PK)
- *     - nota (INT NOT NULL CHECK 1..5)
- *     - comentario (TEXT)
- *     - data (DATE NOT NULL DEFAULT CURRENT_DATE)
- *     - id_cliente (FK)
- *     - id_compra (FK)
- * =============================================================================
- */
 package hunkydory.dao;
 
 import hunkydory.dao.base.BaseDAO;
@@ -37,7 +25,6 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
             ps.setDate(4, review.getDate() != null ? Date.valueOf(review.getDate()) : null);
             ps.setInt(5, review.getCustomerID());
             ps.setInt(6, review.getOrderID());
-
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +45,6 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
             ps.setInt(4, review.getCustomerID());
             ps.setInt(5, review.getOrderID());
             ps.setInt(6, review.getReviewID());
-
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,7 +57,6 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
         String sql = "DELETE FROM avaliacao WHERE id_avaliacao = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, reviewID);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -87,15 +72,16 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
+                Date d = rs.getDate("data");
+                LocalDate dateObj = (d != null) ? d.toLocalDate() : null;
                 Review r = new Review(
                         rs.getInt("id_avaliacao"),
                         rs.getInt("id_cliente"),
                         rs.getInt("id_compra"),
                         rs.getInt("nota"),
                         rs.getString("comentario"),
-                        rs.getDate("data") != null ? rs.getDate("data").toLocalDate() : null
+                        dateObj
                 );
                 list.add(r);
             }
@@ -113,14 +99,15 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
             ps.setInt(1, reviewID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    LocalDate reviewDate = rs.getDate("data") != null ? rs.getDate("data").toLocalDate() : null;
+                    Date d = rs.getDate("data");
+                    LocalDate dateObj = (d != null) ? d.toLocalDate() : null;
                     return new Review(
                             rs.getInt("id_avaliacao"),
                             rs.getInt("id_cliente"),
                             rs.getInt("id_compra"),
                             rs.getInt("nota"),
                             rs.getString("comentario"),
-                            reviewDate
+                            dateObj
                     );
                 }
             }
@@ -129,5 +116,4 @@ public class ReviewDAO extends BaseDAO<Review> implements GenericDAO<Review> {
         }
         return null;
     }
-
 }

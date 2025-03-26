@@ -25,7 +25,7 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
             ps.setString(5, address.getState());
             ps.setString(6, address.getZipCode());
             ps.setString(7, address.getComplement());
-            ps.setInt(8, address.getCostumerID());
+            ps.setInt(8, address.getCustomerID());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
             ps.setString(4, address.getState());
             ps.setString(5, address.getZipCode());
             ps.setString(6, address.getComplement());
-            ps.setInt(7, address.getCostumerID());
+            ps.setInt(7, address.getCustomerID());
             ps.setInt(8, address.getAddressID());
 
             return ps.executeUpdate() > 0;
@@ -79,7 +79,6 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 CustomerAddress ca = new CustomerAddress(
                         rs.getInt("id_endereco"),
@@ -90,7 +89,7 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
                         rs.getString("cep"),
                         rs.getString("complemento")
                 );
-                ca.setCostumerID(rs.getInt("id_cliente"));
+                ca.setCustomerID(rs.getInt("id_cliente"));
                 list.add(ca);
             }
         } catch (SQLException e) {
@@ -105,7 +104,6 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
                 + "FROM endereco_cliente WHERE id_endereco = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, addressID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -118,7 +116,7 @@ public class CustomerAddressDAO extends BaseDAO<CustomerAddress> implements Gene
                             rs.getString("cep"),
                             rs.getString("complemento")
                     );
-                    ca.setCostumerID(rs.getInt("id_cliente"));
+                    ca.setCustomerID(rs.getInt("id_cliente"));
                     return ca;
                 }
             }

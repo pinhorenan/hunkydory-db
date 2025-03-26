@@ -1,11 +1,3 @@
-/*
- * =============================================================================
- *  3) CategoryDAO.java
- *  TABLE: categoria
- *     - id_categoria (PK)
- *     - descricao (NOT NULL, UNIQUE)
- * =============================================================================
- */
 package hunkydory.dao;
 
 import hunkydory.dao.base.BaseDAO;
@@ -26,7 +18,7 @@ public class CategoryDAO extends BaseDAO<Category> implements GenericDAO<Categor
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, category.getCategoryID());
-            ps.setString(2, category.getCategoryName());
+            ps.setString(2, category.getDescription());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,7 +32,7 @@ public class CategoryDAO extends BaseDAO<Category> implements GenericDAO<Categor
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, category.getCategoryName());
+            ps.setString(1, category.getDescription());
             ps.setInt(2, category.getCategoryID());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -70,7 +62,6 @@ public class CategoryDAO extends BaseDAO<Category> implements GenericDAO<Categor
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 Category c = new Category(
                         rs.getInt("id_categoria"),
@@ -89,7 +80,6 @@ public class CategoryDAO extends BaseDAO<Category> implements GenericDAO<Categor
         String sql = "SELECT id_categoria, descricao FROM categoria WHERE id_categoria = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
