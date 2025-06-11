@@ -1,10 +1,10 @@
-# 🛍️ Projeto Banco de Dados – Loja Virtual "Hunky Dory"
+# Projeto Banco de Dados – Loja Virtual "Hunky Dory"
 
 Este projeto é um sistema de gerenciamento de uma loja virtual fictícia chamado **"Hunky Dory"** desenvolvido como trabalho prático da disciplina de Projeto de Banco de Dados. O sistema é construído com JavaFX, PostgreSQL e JDBC para gerenciar clientes, produtos, fornecedores, vendas, estoque e operações administrativas.
 
 ---
 
-## 🚀 Sobre o projeto
+## Sobre o projeto
 
 A aplicação permite:
 
@@ -17,7 +17,7 @@ A aplicação permite:
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - Java 17+
 - JavaFX 20+
@@ -26,7 +26,7 @@ A aplicação permite:
 
 ---
 
-## 📂 Estrutura do projeto
+## Estrutura do projeto
 
 ```
 📦hunkydory
@@ -43,7 +43,7 @@ A aplicação permite:
 
 ---
 
-## 💻 Como compilar e executar
+## Como compilar e executar
 
 **Pré-requisitos:**
 - [Java JDK 17+](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
@@ -92,18 +92,18 @@ gradle run
 ```
 ---
 
-## 📌 Contribuição
+## Contribuição
 
 Este projeto é um trabalho acadêmico e, portanto, não está aberto para contribuições externas.
 
 ---
 
-## 👥 Autores
+## Autores
 
 - Renan Pinho, Gabriel Moura
 
 ---
 
-## 📜 Licença
+## Licença
 
 Este projeto é somente para fins educacionais e acadêmicos.
