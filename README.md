@@ -55,8 +55,8 @@ A aplicação permite:
 1. Clone este repositório:
 
 ```bash
-git clone https://github.com/pinhorenan/SimpleDB_managment.git
-cd SimpleDB-managment
+git clone https://github.com/pinhorenan/hunkydory-db.git
+cd hunkydory-db
 ```
 
 2. Crie e configure seu banco PostgreSQL:
